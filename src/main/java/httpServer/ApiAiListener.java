@@ -1,4 +1,4 @@
-package apiAi;
+package httpServer;
 
 import static spark.Spark.post;
 import com.google.gson.Gson;
@@ -7,15 +7,15 @@ import com.vdurmont.emoji.EmojiParser;
 import ai.api.GsonFactory;
 import ai.api.model.AIResponse;
 import ai.api.model.Fulfillment;
-import hue.Hue;
-import hue.HueException;
+import hueController.Hue;
+import hueController.HueException;
 
-public class httpServer
+public class ApiAiListener
 {
 	public static void main(String args[])
 	{
 		//API.AI WEBHOOK
-    	Gson aiGson = GsonFactory.getDefaultFactory().getGson();			//GsonFactory è nelle classi di api.ai sdk e ha metodi per convertire JSON richiesti da api.ai
+    	Gson aiGson = GsonFactory.getDefaultFactory().getGson();			//GsonFactory ï¿½ nelle classi di api.ai sdk e ha metodi per convertire JSON richiesti da api.ai
     																	//in stringhe JAVA
     	post("/HomeFort", (req, res) ->
     	{
@@ -35,6 +35,7 @@ public class httpServer
     	
     	if(input.getResult().getAction().equalsIgnoreCase("lightsOn"))				//cerca nel JSON di input la action richiesta
     	{
+    		System.out.println("LOL");
     		try 
     		{
 				Hue.lightsOn();
@@ -56,6 +57,10 @@ public class httpServer
     		{
 				text = e.getMessage();
 			}
+    	}
+    	else if(input.getResult().getAction().equalsIgnoreCase("other"))
+    	{
+    		//GLOBAL CATCHER? shows an error page instead of "404 not found"...
     	}
     	
     	output.setSpeech(text);

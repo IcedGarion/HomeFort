@@ -1,4 +1,4 @@
-package hue;
+package hueController;
 
 import java.util.Map;
 
@@ -25,10 +25,10 @@ public class Hue
     private static void init()
     {
     	// get the Hue lamps
-    	allLights = Rest.get(lightsURL);
+    	allLights = HttpClientUtil.get(lightsURL);
     }
     
-	//GLI SI DOVRà PASSARE COME PARAMETRO IL USERNAME TOKEN?
+	//GLI SI DOVRï¿½ PASSARE COME PARAMETRO IL USERNAME TOKEN?
     public static void lightsOn() throws HueException 
     {
     	init();
@@ -38,7 +38,7 @@ public class Hue
 		{
 			String callURL = lightsURL + "1" + "/state";
 			String body = "{ \"on\" : true}";
-			Rest.put(callURL, body, "application/json");
+			HttpClientUtil.put(callURL, body, "application/json");
 		}
 		else
 			throw new HueException("No lights found!");
@@ -52,7 +52,7 @@ public class Hue
 		{
 			String callURL = lightsURL + "1" + "/state";
 			String body = "{ \"on\" : false}";
-			Rest.put(callURL, body, "application/json");
+			HttpClientUtil.put(callURL, body, "application/json");
 		}
 		else
 			throw new HueException("No lights found!");

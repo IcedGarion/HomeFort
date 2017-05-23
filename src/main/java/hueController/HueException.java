@@ -1,4 +1,4 @@
-package hue;
+package hueController;
 
 public class HueException extends Exception
 {

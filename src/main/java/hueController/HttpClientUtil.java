@@ -1,4 +1,4 @@
-package hue;
+package hueController;
 
 import com.google.gson.Gson;
 import org.apache.http.HttpResponse;
@@ -14,7 +14,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Rest {
+public class HttpClientUtil {
 
     // init gson
     private static final Gson gson = new Gson();
@@ -66,8 +66,8 @@ public class Rest {
             params = new StringEntity(contentBody);									//inizializza il body da passare
             request.addHeader("content-type", contentType);							//set content-type
             request.setEntity(params);												//imposta il body con quello passato per parametro
-            // I don't really care about the response
-            HttpResponse result = httpclient.execute(request);						//come nella GET, la put ritorna qualcosa, che so essere un JSON
+            httpclient.execute(request);											//come nella GET, la put ritorna qualcosa, che so essere un JSON
+            
             // should be in finally...
             httpclient.close();
         } catch (Exception e) {
