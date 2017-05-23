@@ -14,6 +14,11 @@ public class ApiAiListener
 {
 	public static void main(String args[])
 	{
+		//CI SONO PIÙ FUNZIONI: LIGHTS, FORECAST, TEMPERATURE....
+		//quindi: /HomeFort/lights; /HomeFort/forecast....
+		//un metodo "doWebHook" per ognuno di questi
+		
+		
 		//API.AI WEBHOOK
     	Gson aiGson = GsonFactory.getDefaultFactory().getGson();			//GsonFactory � nelle classi di api.ai sdk e ha metodi per convertire JSON richiesti da api.ai
     																	//in stringhe JAVA
@@ -35,7 +40,6 @@ public class ApiAiListener
     	
     	if(input.getResult().getAction().equalsIgnoreCase("lightsOn"))				//cerca nel JSON di input la action richiesta
     	{
-    		System.out.println("LOL");
     		try 
     		{
 				Hue.lightsOn();
