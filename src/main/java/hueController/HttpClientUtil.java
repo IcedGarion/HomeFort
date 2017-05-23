@@ -1,7 +1,7 @@
 package hueController;
 
 import com.google.gson.Gson;
-import org.apache.http.HttpResponse;
+
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPut;
@@ -24,8 +24,9 @@ public class HttpClientUtil {
      *
      * @param URL the @link{URL} to call
      * @return the response, parsed from JSON
+     * @throws HueException 
      */
-    public static Map<String, ?> get(String URL) {								//http GET
+    public static Map<String, ?> get(String URL)  {			//http GET
         // init
         Map<String, ?> response = new HashMap<>();
 
@@ -34,15 +35,20 @@ public class HttpClientUtil {
 
         CloseableHttpResponse result = null;									//risposta che riceve dalla get
 
-        try {									
-            result = httpclient.execute(request);								//esegue la get su una URL passata per parametro 
+        try
+        {									
+            //this can cause HttpHostConnectException if no bridge is found
+        	//(different from no lights found)
+        	result = httpclient.execute(request);								//esegue la get su una URL passata per parametro 
             String json = EntityUtils.toString(result.getEntity());				//la get ritorna un JSON 
             // do something useful with the response body
             response = gson.fromJson(json, Map.class);							//trasforma il JSON in MAP JAVA
             // should be inside a finally...
             result.close();														//chiude connessioni
             httpclient.close();
-        } catch (IOException e) {
+        }
+        catch (IOException e)
+        {
             e.printStackTrace();
         }
 

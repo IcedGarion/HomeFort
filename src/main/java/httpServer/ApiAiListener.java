@@ -1,6 +1,7 @@
 package httpServer;
 
 import static spark.Spark.post;
+
 import com.google.gson.Gson;
 import com.vdurmont.emoji.EmojiParser;
 
@@ -14,24 +15,30 @@ public class ApiAiListener
 {
 	public static void main(String args[])
 	{
-		//CI SONO PIÙ FUNZIONI: LIGHTS, FORECAST, TEMPERATURE....
-		//quindi: /HomeFort/lights; /HomeFort/forecast....
-		//un metodo "doWebHook" per ognuno di questi
-		
-		
 		//API.AI WEBHOOK
     	Gson aiGson = GsonFactory.getDefaultFactory().getGson();			//GsonFactory � nelle classi di api.ai sdk e ha metodi per convertire JSON richiesti da api.ai
-    																	//in stringhe JAVA
+    	//post("/HomeFort/lights"											//in stringhe JAVA
     	post("/HomeFort", (req, res) ->
     	{
     		Fulfillment output = new Fulfillment();
     		
+    		//cambiare nome metodo
     		doWebHook(aiGson.fromJson(req.body(), AIResponse.class), output);
     		
     		return output;
     	}, aiGson::toJson);
     	
-    	//se voglio che risponde a qualcos'altro, post("/temperature/..."
+    	/*
+    	post("/HomeFort/ForeCast", (req, res) ->
+    	{
+    		Fulfillment output = new Fulfillment();
+		
+    		//un altro nome
+    		doWebHook(aiGson.fromJson(req.body(), AIResponse.class), output);
+		
+    		return output;
+		}, aiGson::toJson);
+    	 */
     }
 
     private static void doWebHook(AIResponse input, Fulfillment output)
