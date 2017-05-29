@@ -78,9 +78,30 @@ public class ApiAiListener
 				text = e.getMessage();
 			}
     	}
-    	else if(input.getResult().getAction().equalsIgnoreCase("other"))
+    	else if(input.getResult().getAction().equalsIgnoreCase("lightsPower"))
     	{
+    		int percentage, value;
+    		String val = input.getResult().getStringParameter("any");
     		
+    		percentage = Integer.parseInt(val.substring(0, val.length()-1));
+    		try 
+    		{
+    			if(percentage == 0)
+    			{
+    				Hue.lightsOff();
+    				text = "Done! " + EmojiParser.parseToUnicode(":waning_crescent_moon:");
+    			}
+    			else
+    			{
+    				value = (254*percentage)/100;
+    				Hue.lightsPower(value);
+					text = "Done! " ;
+    			}
+			} 
+    		catch (HueException e) 
+    		{
+				text = e.getMessage();
+			}
     	}
     	else
     	{
