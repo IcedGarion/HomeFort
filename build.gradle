@@ -20,4 +20,15 @@ dependencies
     compile "org.slf4j:slf4j-simple:1.7.21"
     compile "ai.api:libai:1.4.8"
     compile "com.vdurmont:emoji-java:3.2.0"
+    compile files('lib/zway-lib-0.2.8-SNAPSHOT.jar')
+    compile 'com.google.code.gson:gson:2.4'
+    compile 'org.apache.commons:commons-lang3:3.4'
+    compile 'org.eclipse.jetty:jetty-client:9.3.11.v20160721'
+    compile 'org.eclipse.jetty:jetty-http:9.3.11.v20160721'
+    compile 'org.eclipse.jetty:jetty-io:9.3.11.v20160721'
+    compile 'org.eclipse.jetty:jetty-util:9.3.11.v20160721'
+    compile 'org.eclipse.jetty.websocket:websocket-api:9.3.12.v20160915'
+    compile 'org.eclipse.jetty.websocket:websocket-client:9.3.12.v20160915'
+    compile 'org.eclipse.jetty.websocket:websocket-common:9.3.12.v20160915'
+    compile 'org.slf4j:slf4j-simple:1.7.21'
 }

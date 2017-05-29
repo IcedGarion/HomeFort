@@ -10,11 +10,20 @@ import ai.api.model.AIResponse;
 import ai.api.model.Fulfillment;
 import hueController.Hue;
 import hueController.HueException;
+import zWaveController.ZWave;
 
 public class ApiAiListener
 {
+	//lista dei soli sensori/plug ID che hai?
+	
 	public static void main(String args[])
 	{
+		//prova zwave
+			ZWave.init();
+			ZWave.getAllPlugs();
+			ZWave.getAllSensors();
+			
+			
 		//API.AI WEBHOOK
     	Gson aiGson = GsonFactory.getDefaultFactory().getGson();			//GsonFactory � nelle classi di api.ai sdk e ha metodi per convertire JSON richiesti da api.ai
     	//post("/HomeFort/lights"											//in stringhe JAVA
@@ -71,7 +80,11 @@ public class ApiAiListener
     	}
     	else if(input.getResult().getAction().equalsIgnoreCase("other"))
     	{
-    		//GLOBAL CATCHER? shows an error page instead of "404 not found"...
+    		
+    	}
+    	else
+    	{
+    		//GLOBAL CATCHER? done in api.ai?
     	}
     	
     	output.setSpeech(text);
