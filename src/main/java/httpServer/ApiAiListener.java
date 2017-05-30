@@ -14,19 +14,22 @@ import zWaveController.ZWave;
 
 public class ApiAiListener
 {
+	private static int sensorNodeId = 5;
+	private static int plugNodeId = 4;
+
 	//lista dei soli sensori/plug ID che hai?
 	
 	public static void main(String args[])
 	{
 		//prova zwave
 			ZWave.init();
-			ZWave.getAllPlugs();
-			ZWave.getAllSensors();
+		//	ZWave.getAllPlugs();
+		//	ZWave.getAllSensors();
 			
 			
 		//API.AI WEBHOOK
     	Gson aiGson = GsonFactory.getDefaultFactory().getGson();			//GsonFactory � nelle classi di api.ai sdk e ha metodi per convertire JSON richiesti da api.ai
-    	//post("/HomeFort/lights"											//in stringhe JAVA
+																			//in stringhe JAVA
     	post("/HomeFort", (req, res) ->
     	{
     		Fulfillment output = new Fulfillment();
@@ -36,23 +39,11 @@ public class ApiAiListener
     		
     		return output;
     	}, aiGson::toJson);
-    	
-    	/*
-    	post("/HomeFort/ForeCast", (req, res) ->
-    	{
-    		Fulfillment output = new Fulfillment();
-		
-    		//un altro nome
-    		doWebHook(aiGson.fromJson(req.body(), AIResponse.class), output);
-		
-    		return output;
-		}, aiGson::toJson);
-    	 */
     }
 
     private static void doWebHook(AIResponse input, Fulfillment output)
     {
-    	String text = "ERROR";
+    	String text = "ERRORE";
     	
     	if(input.getResult().getAction().equalsIgnoreCase("lightsOn"))				//cerca nel JSON di input la action richiesta
     	{
@@ -102,6 +93,19 @@ public class ApiAiListener
     		{
 				text = e.getMessage();
 			}
+    	}
+    	else if(input.getResult().getAction().equalsIgnoreCase("temperature"))
+    	{
+    		String temperature = ZWave.getTemperature(sensorNodeId);
+
+    		if(temperature.equals("ERRORE"))
+    			text = "errore";
+    		else
+    			text = "La temperatura e' " + temperature;
+    	}
+    	else if(input.getResult().getAction().equalsIgnoreCase("temperature"))
+    	{
+    		
     	}
     	else
     	{
