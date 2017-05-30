@@ -2,6 +2,10 @@ package httpServer;
 
 import static spark.Spark.post;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Date;
+
 import com.google.gson.Gson;
 import com.vdurmont.emoji.EmojiParser;
 
@@ -11,6 +15,7 @@ import ai.api.model.Fulfillment;
 import hueController.Hue;
 import hueController.HueException;
 import zWaveController.ZWave;
+
 
 public class ApiAiListener
 {
@@ -103,11 +108,17 @@ public class ApiAiListener
 				text = e.getMessage();
 			}
     	}
+    	else if(input.getResult().getAction().equalsIgnoreCase("time"))
+    	{
+    		LocalDateTime t = LocalDateTime.now();
+    		text = "" + t.getDayOfMonth() + "/"+ t.getMonthValue() +"/"+ t.getYear() +"\n"+ t.getHour() +":"+ t.getMinute() +":"+t.getSecond() ;
+    		//text="" + t.format(DateTimeFormatter.RFC_1123_DATE_TIME);
+    	}
     	else
     	{
     		//GLOBAL CATCHER? done in api.ai?
     	}
-    	
+
     	output.setSpeech(text);
     	output.setDisplayText(text);
 	}
