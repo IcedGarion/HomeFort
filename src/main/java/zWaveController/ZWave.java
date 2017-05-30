@@ -5,6 +5,7 @@ import de.fh_zwickau.informatik.sensor.ZWayApiHttp;
 import de.fh_zwickau.informatik.sensor.model.devices.Device;
 import de.fh_zwickau.informatik.sensor.model.devices.DeviceList;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -46,43 +47,49 @@ public class ZWave
     {
     	//get all the Z-Wave devices
         DeviceList allDevices = zwayApi.getDevices();
-        //return zwayApi.getDevice("device_" + sensorNodeId);
         
         Map<Integer, List<Device>> sensor = allDevices.getDevicesByNodeId(sensorNodeId);	//prende il device numero x e ritorna una mappa in cui c'è solo l'elemento numero x
         List<Device> tmp = sensor.get(sensorNodeId);										//prende dalla mappa questo elemento numero x (una lista di comandi che puoi dare su quel device)
-        																		//cicla sulla lista per trovare il probe "temperature"
+        																					//poi cicla sulla lista per trovare il probe "temperature" o altro
         return tmp;
     }
     
-    public static void getMeasurements(int sensorNodeId)
-    {
-    	List<Device> sensor = getSensor(sensorNodeId);
-    	
-    	
-    	//simile a temperature, ma prende tutti i probes (vedi sotto, getallplugs)
-    }
-    
-    public static String getTemperature(int sensorNodeId)
+    public static Map<String, String> getMeasurements(int sensorNodeId)
     {
     	List<Device> sensorProbes = getSensor(sensorNodeId);
-    	String temperature = "ERROR";
+    	Map<String, String> measures = new HashMap<String, String>();
     	
     	for(Device probe : sensorProbes)
     	{
     		if(probe.getDeviceType().equalsIgnoreCase("SensorMultilevel"))
+    		{
     			if(probe.getProbeType().equalsIgnoreCase("temperature"))
-    				temperature = probe.getMetrics().getLevel() + " " + probe.getMetrics().getScaleTitle();
+    				measures.put("temperature", probe.getMetrics().getLevel() + " " + probe.getMetrics().getScaleTitle());
+    			else if(probe.getProbeType().equalsIgnoreCase("luminosity"))
+    				measures.put("luminosity", probe.getMetrics().getLevel() + " " + probe.getMetrics().getScaleTitle());
+    			else if(probe.getProbeType().equalsIgnoreCase("humidity"))
+    				measures.put("humidity", probe.getMetrics().getLevel() + " " + probe.getMetrics().getScaleTitle());
+    		}
     	}
     	
-    	return temperature;
+    	return measures;
+    	
+    	//simile a temperature, ma prende tutti i probes (vedi sotto, getallplugs)
+    }
+    
+    
+    //alla fine questa chiamerà measurements e si prende solo la temperatura dalla Map
+    public static String getTemperature(int sensorNodeId)
+    {
+    	Map<String, String> measures = getMeasurements(sensorNodeId);
+    	
+    	return measures.get("temperature");
     }
     
     public static void getAllPlugs()
     {
     	//get all the Z-Wave devices
         DeviceList allDevices = zwayApi.getDevices();
-
-        
         
         // search all sensors
         for (Device dev : allDevices.getAllDevices())
@@ -119,4 +126,16 @@ public class ZWave
         }
 
     }
+
+	public static String renderMeasurements(int sensorNodeId)
+	{
+		String text = "";
+		Map<String, String> measurements = getMeasurements(sensorNodeId);
+		
+		text += "temperatura : " + measurements.get("temperature");
+		text += "luminosita' : " + measurements.get("luminosity");
+		text += "umidita' : " + measurements.get("humidity");
+		
+		return text;
+	}
 }

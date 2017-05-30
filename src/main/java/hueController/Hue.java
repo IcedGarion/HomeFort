@@ -55,7 +55,7 @@ public class Hue
     {
     	init();
 
-        // prende la prima lampadina e accende
+        //prende la prima lampadina e accende
 		if (allLights.containsKey("1")) 
 		{
 			String callURL = lightsURL + "1" + "/state";

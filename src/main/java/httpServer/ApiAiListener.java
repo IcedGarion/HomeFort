@@ -5,6 +5,7 @@ import static spark.Spark.post;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
+import java.util.Map;
 
 import com.google.gson.Gson;
 import com.vdurmont.emoji.EmojiParser;
@@ -26,12 +27,8 @@ public class ApiAiListener
 	
 	public static void main(String args[])
 	{
-		//prova zwave
-			ZWave.init();
-		//	ZWave.getAllPlugs();
-		//	ZWave.getAllSensors();
-			
-			
+		ZWave.init();
+		
 		//API.AI WEBHOOK
     	Gson aiGson = GsonFactory.getDefaultFactory().getGson();			//GsonFactory � nelle classi di api.ai sdk e ha metodi per convertire JSON richiesti da api.ai
 																			//in stringhe JAVA
@@ -48,7 +45,7 @@ public class ApiAiListener
 
     private static void doWebHook(AIResponse input, Fulfillment output)
     {
-    	String text = "ERRORE";
+    	String text = "ERRORE ";
     	
     	if(input.getResult().getAction().equalsIgnoreCase("lightsOn"))				//cerca nel JSON di input la action richiesta
     	{
@@ -59,7 +56,7 @@ public class ApiAiListener
 			} 
     		catch (HueException e) 
     		{
-				text = e.getMessage();
+				text += e.getMessage();
 			}
     	}
     	else if(input.getResult().getAction().equalsIgnoreCase("lightsOff"))
@@ -71,7 +68,7 @@ public class ApiAiListener
 			} 
     		catch (HueException e) 
     		{
-				text = e.getMessage();
+				text += e.getMessage();
 			}
     	}
     	else if(input.getResult().getAction().equalsIgnoreCase("lightsPower"))
@@ -96,28 +93,52 @@ public class ApiAiListener
 			} 
     		catch (HueException e) 
     		{
-				text = e.getMessage();
+				text += e.getMessage();
 			}
     	}
-
-		else if(input.getResult().getAction().equalsIgnoreCase("temperature"))
+    	else if(input.getResult().getAction().equalsIgnoreCase("time"))
     	{
-    		String temperature = ZWave.getTemperature(sensorNodeId);
-
-    		if(temperature.equals("ERRORE"))
-    			text = "errore";
-    		else
-    			text = "La temperatura e' " + temperature;
+    		try
+    		{
+    			LocalDateTime t = LocalDateTime.now();
+    			text = "" + t.getDayOfMonth() + "/"+ t.getMonthValue() +"/"+ t.getYear() +"\n"+ t.getHour() +":"+ t.getMinute() +":"+t.getSecond() ;
+    			//text="" + t.format(DateTimeFormatter.RFC_1123_DATE_TIME);
+    		}
+    		catch (Exception e) 
+    		{
+				text += e.getMessage();
+			}
     	}
     	else if(input.getResult().getAction().equalsIgnoreCase("temperature"))
     	{
+    		String temperature;
     		
-    	}		else if(input.getResult().getAction().equalsIgnoreCase("time"))
+    		try
+    		{
+    			temperature = ZWave.getTemperature(sensorNodeId);
+    			
+    			if(temperature.equals("ERRORE"))
+    				text = "Nessun dispositivo trovato";
+    			else
+    				text = "La temperatura e' " + temperature;
+    		}
+    		catch (Exception e) 
+    		{
+				text += e.getMessage();
+			}
+    	}
+    	else if(input.getResult().getAction().equalsIgnoreCase("sensorInfo"))
     	{
-    		LocalDateTime t = LocalDateTime.now();
-    		text = "" + t.getDayOfMonth() + "/"+ t.getMonthValue() +"/"+ t.getYear() +"\n"+ t.getHour() +":"+ t.getMinute() +":"+t.getSecond() ;
-    		//text="" + t.format(DateTimeFormatter.RFC_1123_DATE_TIME);
-    	}    	else
+    		try
+    		{
+    			text = ZWave.renderMeasurements(sensorNodeId);
+    		}
+    		catch (Exception e) 
+    		{
+				text += e.getMessage();
+			}
+    	}
+    	else
     	{
     		//GLOBAL CATCHER? done in api.ai?
     	}
