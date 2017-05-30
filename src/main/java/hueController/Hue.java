@@ -47,7 +47,7 @@ public class Hue
 		if (allLights.containsKey("1")) 
 		{
 			String callURL = lightsURL + "1" + "/state";
-			String body = "{ \"on\" : true, \"bri\" : 254 }";
+			String body = "{ \"on\" : true }";
 			HttpClientUtil.put(callURL, body, "application/json");
 		}
 		else
@@ -56,7 +56,7 @@ public class Hue
     public static void lightsOff() throws HueException 
     {
     	init();
-
+    	
         //prende la prima lampadina e accende
 		if (allLights.containsKey("1")) 
 		{
@@ -71,6 +71,8 @@ public class Hue
     public static void lightsPower(int value) throws HueException 
     {
     	init();
+    	
+    	lightsOn();
 
         // prende la prima lampadina e accende
 		if (allLights.containsKey("1")) 

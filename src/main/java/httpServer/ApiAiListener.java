@@ -75,7 +75,10 @@ public class ApiAiListener
     	{
     		int percentage;
     		String val = input.getResult().getStringParameter("any");
-    		percentage = Integer.parseInt(val.substring(0, val.length()-1));
+    		if(val.contains("%"))
+    			percentage = Integer.parseInt(val.substring(0, val.length()-1));
+    		else
+    			percentage = Integer.parseInt(val);
     		
     		try 
     		{
