@@ -20,8 +20,8 @@ import zWaveController.ZWave;
 
 public class ApiAiListener
 {
-	private static int sensorNodeId = 5;
-	private static int plugNodeId = 4;
+	public static int sensorNodeId = 5;
+	public static int plugNodeId = 4;
 
 	//lista dei soli sensori/plug ID che hai?
 	
@@ -73,27 +73,18 @@ public class ApiAiListener
     	}
     	else if(input.getResult().getAction().equalsIgnoreCase("lightsPower"))
     	{
-    		int percentage, value;
+    		int percentage;
     		String val = input.getResult().getStringParameter("any");
-    		
     		percentage = Integer.parseInt(val.substring(0, val.length()-1));
+    		
     		try 
     		{
-    			if(percentage == 0)
-    			{
-    				Hue.lightsOff();
-    				text = "Done! " + EmojiParser.parseToUnicode(":waning_crescent_moon:");
-    			}
-    			else
-    			{
-    				value = (254*percentage)/100;
-    				Hue.lightsPower(value);
-					text = "Done! " ;
-    			}
+    			Hue.lightsPower(percentage);
+				text = "Done! " + EmojiParser.parseToUnicode(":waning_crescent_moon:");
 			} 
     		catch (HueException e) 
     		{
-				text += e.getMessage();
+				text = e.getMessage();
 			}
     	}
     	else if(input.getResult().getAction().equalsIgnoreCase("time"))
