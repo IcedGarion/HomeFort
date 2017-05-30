@@ -4,6 +4,10 @@ import de.fh_zwickau.informatik.sensor.IZWayApi;
 import de.fh_zwickau.informatik.sensor.ZWayApiHttp;
 import de.fh_zwickau.informatik.sensor.model.devices.Device;
 import de.fh_zwickau.informatik.sensor.model.devices.DeviceList;
+
+import java.util.List;
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,29 +42,39 @@ public class ZWave
         zwayApi = new ZWayApiHttp(ipAddress, 8083, "http", username, password, 0, false, new ZWaySimpleCallback());
     }
     
-    public static void getAllSensors()
+    private static List<Device> getSensor(int sensorNodeId)
     {
     	//get all the Z-Wave devices
         DeviceList allDevices = zwayApi.getDevices();
-
-        // search all sensors
-        for (Device dev : allDevices.getAllDevices())
-        {
-            if (dev.getDeviceType().equalsIgnoreCase("SensorMultilevel"))
-            {
-            	 logger.info("Device " + dev.getNodeId() + " is a " + dev.getDeviceType());
-            	
-            	 // get only temperature and power consumption from available sensors
-                 if (dev.getProbeType().equalsIgnoreCase("temperature")) {
-                     logger.info(dev.getMetrics().getProbeTitle() + " level: " + dev.getMetrics().getLevel() + " " + dev.getMetrics().getScaleTitle());
-                 } else if (dev.getProbeType().equalsIgnoreCase("meterElectric_watt")) {
-                     logger.info(dev.getMetrics().getProbeTitle() + " level: " + dev.getMetrics().getLevel() + " " + dev.getMetrics().getScaleTitle());
-                 } else {
-                     // get all measurements from sensors
-                     logger.info(dev.getMetrics().getProbeTitle() + " level: " + dev.getMetrics().getLevel() + " uom: " + dev.getMetrics().getScaleTitle());
-                 }
-            }
-        }
+        //return zwayApi.getDevice("device_" + sensorNodeId);
+        
+        Map<Integer, List<Device>> sensor = allDevices.getDevicesByNodeId(sensorNodeId);	//prende il device numero x e ritorna una mappa in cui c'è solo l'elemento numero x
+        List<Device> tmp = sensor.get(sensorNodeId);										//prende dalla mappa questo elemento numero x (una lista di comandi che puoi dare su quel device)
+        																		//cicla sulla lista per trovare il probe "temperature"
+        return tmp;
+    }
+    
+    public static void getMeasurements(int sensorNodeId)
+    {
+    	List<Device> sensor = getSensor(sensorNodeId);
+    	
+    	
+    	//simile a temperature, ma prende tutti i probes (vedi sotto, getallplugs)
+    }
+    
+    public static String getTemperature(int sensorNodeId)
+    {
+    	List<Device> sensorProbes = getSensor(sensorNodeId);
+    	String temperature = "ERROR";
+    	
+    	for(Device probe : sensorProbes)
+    	{
+    		if(probe.getDeviceType().equalsIgnoreCase("SensorMultilevel"))
+    			if(probe.getProbeType().equalsIgnoreCase("temperature"))
+    				temperature = probe.getMetrics().getLevel() + " " + probe.getMetrics().getScaleTitle();
+    	}
+    	
+    	return temperature;
     }
     
     public static void getAllPlugs()
@@ -68,6 +82,8 @@ public class ZWave
     	//get all the Z-Wave devices
         DeviceList allDevices = zwayApi.getDevices();
 
+        
+        
         // search all sensors
         for (Device dev : allDevices.getAllDevices())
         {
