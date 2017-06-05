@@ -1,6 +1,7 @@
 package zWaveController;
 
 import de.fh_zwickau.informatik.sensor.IZWayApi;
+
 import de.fh_zwickau.informatik.sensor.ZWayApiHttp;
 import de.fh_zwickau.informatik.sensor.model.devices.Device;
 import de.fh_zwickau.informatik.sensor.model.devices.DeviceList;
@@ -9,8 +10,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Sample usage of the Z-Way API. It looks for all sensors and power outlets.
@@ -24,15 +23,11 @@ import org.slf4j.LoggerFactory;
  */
 public class ZWave
 {
-	private static Logger logger;
 	private static IZWayApi zwayApi;
 
     public static void init()
     {
-        // init logger
-        logger = LoggerFactory.getLogger(ZWave.class);
-
-        // example RaZberry IP address
+    	// example RaZberry IP address
         String ipAddress = "172.30.1.137";
 
         // example username and password
@@ -43,6 +38,8 @@ public class ZWave
         zwayApi = new ZWayApiHttp(ipAddress, 8083, "http", username, password, 0, false, new ZWaySimpleCallback());
     }
     
+    
+    //SENSOR
     private static List<Device> getSensor(int sensorNodeId)
     {
     	//get all the Z-Wave devices
@@ -54,7 +51,7 @@ public class ZWave
         return tmp;
     }
     
-    public static Map<String, String> getMeasurements(int sensorNodeId)
+    public static Map<String, String> getSensorMeasurements(int sensorNodeId)
     {
     	List<Device> sensorProbes = getSensor(sensorNodeId);
     	Map<String, String> measures = new HashMap<String, String>();
@@ -70,22 +67,133 @@ public class ZWave
     			else if(probe.getProbeType().equalsIgnoreCase("humidity"))
     				measures.put("humidity", probe.getMetrics().getLevel() + " " + probe.getMetrics().getScaleTitle());
     		}
+    		if(probe.getDeviceType().equalsIgnoreCase("SensorBinary"))
+    		{
+    			if(probe.getProbeType().equalsIgnoreCase("general_purpose"))
+    				measures.put("motion", probe.getMetrics().getLevel());
+    		}
     	}
     	
     	return measures;
-    	
-    	//simile a temperature, ma prende tutti i probes (vedi sotto, getallplugs)
     }
     
-    
-    //alla fine questa chiamerà measurements e si prende solo la temperatura dalla Map
     public static String getTemperature(int sensorNodeId)
     {
-    	Map<String, String> measures = getMeasurements(sensorNodeId);
+    	Map<String, String> measures = getSensorMeasurements(sensorNodeId);
     	
     	return measures.get("temperature");
     }
     
+    public static String getLuminosity(int sensorNodeId)
+    {
+    	Map<String, String> measures = getSensorMeasurements(sensorNodeId);
+    	
+    	return measures.get("luminosity");
+    }
+    
+    public static String getHumidity(int sensorNodeId)
+    {
+    	Map<String, String> measures = getSensorMeasurements(sensorNodeId);
+    	
+    	return measures.get("humidity");
+    }
+    
+    public static String getMotion(int sensorNodeId)
+    {
+    	Map<String, String> measures = getSensorMeasurements(sensorNodeId);
+    	
+    	return measures.get("motion");
+    }
+    
+    public static String renderSensorMeasurements(int sensorNodeId)
+	{
+		String text = "", motion = "0";
+		Map<String, String> measurements = getSensorMeasurements(sensorNodeId);
+		
+		text += "temperatura : " + measurements.get("temperature") + "\n";
+		text += "luminosita' : " + measurements.get("luminosity") + "\n";
+		text += "umidita' : " + measurements.get("humidity") + "\n";
+		
+		motion = measurements.get("motion");
+		if(motion.toLowerCase().startsWith("on"))
+			text += "presenza : " + "rilevata " + "\n";
+		else
+			text += "presenza : " + "nessuna " + "\n";
+		
+		return text;
+	}
+    
+    
+    //PLUGS
+    private static List<Device> getPlugDevice(int plugNodeId)
+    {
+    	//get all the Z-Wave devices
+        DeviceList allDevices = zwayApi.getDevices();
+        
+        Map<Integer, List<Device>> plug = allDevices.getDevicesByNodeId(plugNodeId);	//prende il device numero x e ritorna una mappa in cui c'è solo l'elemento numero x
+        List<Device> tmp = plug.get(plugNodeId);										//prende dalla mappa questo elemento numero x (una lista di comandi che puoi dare su quel device)
+        																					//poi cicla sulla lista per trovare il probe "temperature" o altro
+        return tmp;
+    }
+    
+    
+    public static Map<String, String> getPlugMeasurements(int plugNodeId)
+    {
+    	//prende tutti i sensori della plug
+    	List<Device> plugProbes = getPlugDevice(plugNodeId);
+    	Map<String, String> measures = new HashMap<String, String>();
+    	
+    	for(Device probe : plugProbes)
+    	{
+    		if(probe.getDeviceType().equalsIgnoreCase("SensorMultilevel"))
+    		{
+    			if(probe.getProbeType().equalsIgnoreCase("meterElectric_watt"))
+    				measures.put("power", probe.getMetrics().getLevel() + " " + probe.getMetrics().getScaleTitle());
+    			else if(probe.getProbeType().equalsIgnoreCase("meterElectric_kilowatt_hour"))
+    				measures.put("consumption", probe.getMetrics().getLevel() + " " + probe.getMetrics().getScaleTitle());
+    		}
+    	}
+    	
+    	return measures;
+    }
+    
+    public static String renderPlugMeasurements(int sensorNodeId)
+	{
+		String text = "";
+		Map<String, String> measurements = getPlugMeasurements(sensorNodeId);
+		
+		text += "Potenza : " + measurements.get("meterElectric_watt") + "\n";
+		
+		return text;
+	}
+    
+    public static void plugOn(int plugNodeId)
+    {
+    	List<Device> plugProbes = getPlugDevice(plugNodeId);
+    	
+    	for(Device probe : plugProbes)
+    	{
+    		if(probe.getDeviceType().equalsIgnoreCase("SwitchBinary"))
+    		{
+    			probe.on();
+    		}
+    	}
+    }
+    
+    public static void plugOff(int plugNodeId)
+    {
+    	List<Device> plugProbes = getPlugDevice(plugNodeId);
+    	
+    	for(Device probe : plugProbes)
+    	{
+    		if(probe.getDeviceType().equalsIgnoreCase("SwitchBinary"))
+    		{
+    			probe.off();
+    		}
+    	}
+    }
+    
+    /*
     public static void getAllPlugs()
     {
     	//get all the Z-Wave devices
@@ -110,7 +218,8 @@ public class ZWave
             }
         }
     }
-
+	*/
+    /*
     public static void turnAllOff()
     {
     	DeviceList allDevices = zwayApi.getDevices();
@@ -124,18 +233,6 @@ public class ZWave
                 dev.off();
             }
         }
-
     }
-
-	public static String renderMeasurements(int sensorNodeId)
-	{
-		String text = "";
-		Map<String, String> measurements = getMeasurements(sensorNodeId);
-		
-		text += "temperatura : " + measurements.get("temperature");
-		text += "luminosita' : " + measurements.get("luminosity");
-		text += "umidita' : " + measurements.get("humidity");
-		
-		return text;
-	}
+    */
 }

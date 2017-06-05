@@ -3,9 +3,6 @@ package httpServer;
 import static spark.Spark.post;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Date;
-import java.util.Map;
 
 import com.google.gson.Gson;
 import com.vdurmont.emoji.EmojiParser;
@@ -15,6 +12,7 @@ import ai.api.model.AIResponse;
 import ai.api.model.Fulfillment;
 import hueController.Hue;
 import hueController.HueException;
+import threads.ComfortControl;
 import zWaveController.ZWave;
 
 
@@ -28,6 +26,8 @@ public class ApiAiListener
 	public static void main(String args[])
 	{
 		ZWave.init();
+		Thread comfort = new ComfortControl();
+		comfort.start();
 		
 		//API.AI WEBHOOK
     	Gson aiGson = GsonFactory.getDefaultFactory().getGson();			//GsonFactory � nelle classi di api.ai sdk e ha metodi per convertire JSON richiesti da api.ai
@@ -121,11 +121,102 @@ public class ApiAiListener
 				text += e.getMessage();
 			}
     	}
+    	else if(input.getResult().getAction().equalsIgnoreCase("luminosity"))
+    	{
+    		String luminosity;
+    		
+    		try
+    		{
+    			luminosity = ZWave.getLuminosity(sensorNodeId);
+    			
+    			if(luminosity.equals("ERRORE"))
+    				text = "Nessun dispositivo trovato";
+    			else
+    				text = "La luminosita' e' " + luminosity;
+    		}
+    		catch (Exception e) 
+    		{
+				text += e.getMessage();
+			}
+    	}
+    	else if(input.getResult().getAction().equalsIgnoreCase("humidity"))
+    	{
+    		String humidity;
+    		
+    		try
+    		{
+    			humidity = ZWave.getHumidity(sensorNodeId);
+    			
+    			if(humidity.equals("ERRORE"))
+    				text = "Nessun dispositivo trovato";
+    			else
+    				text = "L'umidita' e' " + humidity;
+    		}
+    		catch (Exception e) 
+    		{
+				text += e.getMessage();
+			}
+    	}
+    	else if(input.getResult().getAction().equalsIgnoreCase("motion"))
+    	{
+    		String motion;
+    		
+    		try
+    		{
+    			motion = ZWave.getMotion(sensorNodeId);
+    			
+    			if(motion.equals("ERRORE"))
+    				text = "Nessun dispositivo trovato";
+    			else if(motion.toLowerCase().startsWith("on"))
+    				text = "Nessun movimento ";
+    			else
+    				text = "C'e' movimento nella stanza ";
+    		}
+    		catch (Exception e) 
+    		{
+				text += e.getMessage();
+			}
+    	}
     	else if(input.getResult().getAction().equalsIgnoreCase("sensorInfo"))
     	{
     		try
     		{
-    			text = ZWave.renderMeasurements(sensorNodeId);
+    			text = ZWave.renderSensorMeasurements(sensorNodeId);
+    		}
+    		catch (Exception e) 
+    		{
+				text += e.getMessage();
+			}
+    	}
+    	else if(input.getResult().getAction().equalsIgnoreCase("plugInfo"))
+    	{
+    		try
+    		{
+    			text = ZWave.renderPlugMeasurements(plugNodeId);
+    		}
+    		catch (Exception e) 
+    		{
+				text += e.getMessage();
+			}
+    	}
+    	else if(input.getResult().getAction().equalsIgnoreCase("plugOn"))
+    	{
+    		try
+    		{
+    			ZWave.plugOn(plugNodeId);
+    			text = "Presa Accesa! ";
+    		}
+    		catch (Exception e) 
+    		{
+				text += e.getMessage();
+			}
+    	}
+    	else if(input.getResult().getAction().equalsIgnoreCase("plugOff"))
+    	{
+    		try
+    		{
+    			ZWave.plugOff(plugNodeId);
+    			text = "Presa Spenta! ";
     		}
     		catch (Exception e) 
     		{
