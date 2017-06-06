@@ -19,7 +19,7 @@ import zWaveController.ZWave;
 public class ApiAiListener
 {
 	public static int sensorNodeId = 5;
-	public static int plugNodeId = 4;
+	public static int plugNodeId = 3;
 
 	//lista dei soli sensori/plug ID che hai?
 	
@@ -28,6 +28,8 @@ public class ApiAiListener
 		ZWave.init();
 		Thread comfort = new ComfortControl();
 		comfort.start();
+		//ZWave.getAllDevices();
+		System.out.println(ZWave.renderPlugMeasurements(plugNodeId));
 		
 		//API.AI WEBHOOK
     	Gson aiGson = GsonFactory.getDefaultFactory().getGson();			//GsonFactory � nelle classi di api.ai sdk e ha metodi per convertire JSON richiesti da api.ai

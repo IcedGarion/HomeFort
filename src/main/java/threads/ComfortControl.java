@@ -28,9 +28,24 @@ public class ComfortControl extends Thread
 			float tempNumb= Float.parseFloat(temperature.substring(0, temperature.length()-2));
 			
 			if(tempNumb < COMFORT_TEMPERATURE)
+			{
 				ZWave.plugOn(ApiAiListener.plugNodeId);
+				//Hue.cold();
+			}
 			else
 				ZWave.plugOff(ApiAiListener.plugNodeId);
+			
+			/*if(tempNumb>30)
+			{
+				try 
+				{
+					Hue.hot();
+				} 
+				catch (HueException e) 
+				{
+					e.printStackTrace();
+				}
+			}*/
 			
 			/*
 			// CONTROLLA LUMINOSTA' E USA FUNZIONI HUE

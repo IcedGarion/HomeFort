@@ -157,12 +157,13 @@ public class ZWave
     	return measures;
     }
     
-    public static String renderPlugMeasurements(int sensorNodeId)
+    public static String renderPlugMeasurements(int plugNodeId)
 	{
 		String text = "";
-		Map<String, String> measurements = getPlugMeasurements(sensorNodeId);
+		Map<String, String> measurements = getPlugMeasurements(plugNodeId);
 		
-		text += "Potenza : " + measurements.get("meterElectric_watt") + "\n";
+		text += "Potenza : " + measurements.get("power") + "\n";
+		text += "Consumo : " + measurements.get("consumption") + "\n";
 		
 		return text;
 	}
@@ -193,8 +194,8 @@ public class ZWave
     	}
     }
     
-    /*
-    public static void getAllPlugs()
+    
+    public static void getAllDevices()
     {
     	//get all the Z-Wave devices
         DeviceList allDevices = zwayApi.getDevices();
@@ -202,23 +203,32 @@ public class ZWave
         // search all sensors
         for (Device dev : allDevices.getAllDevices())
         {
-            if (dev.getDeviceType().equalsIgnoreCase("SensorBinary"))
+            if (dev.getDeviceType().equalsIgnoreCase("SensorMultilevel"))
             {
-            	 logger.info("Device " + dev.getNodeId() + " is a " + dev.getDeviceType());
+            	 System.out.println("Device " + dev.getNodeId() + " is a " + dev.getDeviceType());
             	
             	 // get only temperature and power consumption from available sensors
                  if (dev.getProbeType().equalsIgnoreCase("temperature")) {
-                     logger.info(dev.getMetrics().getProbeTitle() + " level: " + dev.getMetrics().getLevel() + " " + dev.getMetrics().getScaleTitle());
+                     System.out.println(dev.getMetrics().getProbeTitle() + " level: " + dev.getMetrics().getLevel() + " " + dev.getMetrics().getScaleTitle());
                  } else if (dev.getProbeType().equalsIgnoreCase("meterElectric_watt")) {
-                     logger.info(dev.getMetrics().getProbeTitle() + " level: " + dev.getMetrics().getLevel() + " " + dev.getMetrics().getScaleTitle());
+                     System.out.println(dev.getMetrics().getProbeTitle() + " level: " + dev.getMetrics().getLevel() + " " + dev.getMetrics().getScaleTitle());
                  } else {
                      // get all measurements from sensors
-                     logger.info(dev.getMetrics().getProbeTitle() + " level: " + dev.getMetrics().getLevel() + " uom: " + dev.getMetrics().getScaleTitle());
+                     System.out.println(dev.getMetrics().getProbeTitle() + " level: " + dev.getMetrics().getLevel() + " uom: " + dev.getMetrics().getScaleTitle());
                  }
+            }
+            else if(dev.getDeviceType().equalsIgnoreCase("SwitchBinary"))
+            {
+            	System.out.println("Device " + dev.getNodeId() + " is a " + dev.getDeviceType());
+            }
+            else if(dev.getDeviceType().equalsIgnoreCase("SensorBinary"))
+            {
+            	System.out.println("Device " + dev.getNodeId() + " is a " + dev.getDeviceType());
             }
         }
     }
-	*/
+    
+	
     /*
     public static void turnAllOff()
     {
