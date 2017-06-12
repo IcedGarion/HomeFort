@@ -15,6 +15,7 @@ import ai.api.model.Fulfillment;
 import hueController.Hue;
 import hueController.HueException;
 import threads.ComfortControl;
+import threads.LightControl;
 import zWaveController.ZWave;
 
 
@@ -24,20 +25,20 @@ public class ApiAiListener
 	public static int plugNodeId = 19;	//3 è safety home
 	public final static String LIGHTS_TIMES_FILE = "resources/lightsTimes";
 	public static boolean autoMode = false;
-	//auto mode: dice che deve intervenire comfortControl e LightControl (quindi regola luci come vuole)
-	//viene impostata con un comando apposito, e inoltre se utente accende la luce viene disattivata! (+ avvisa utente)
+	//autoMode: dice che deve intervenire comfortControl e LightControl (quindi regola luci come vuole)
+	//viene impostata con un comando apposito, e inoltre se utente accende o spegne la luce viene disattivata! (+ avvisa utente)
 	
-	
-	//da fare, magari, lista dei soli sensori/plug ID che hai?
 	
 	public static void main(String args[]) throws HueException, InterruptedException
 	{
-		ZWave.init();
-		/*Thread comfort = new ComfortControl();
-		comfort.start();*/
-
     	Gson aiGson = GsonFactory.getDefaultFactory().getGson();
-																
+
+		ZWave.init();
+		Thread comfort = new ComfortControl();
+		comfort.start();
+		Thread lights = new LightControl();
+		lights.start();
+														
     	post("/HomeFort", (req, res) ->
     	{
     		Fulfillment output = new Fulfillment();
@@ -45,8 +46,6 @@ public class ApiAiListener
     		return output;
     	}, aiGson::toJson);
     }
-
-	
 	
     private static void doWebHook(AIResponse input, Fulfillment output)
     {
@@ -58,10 +57,18 @@ public class ApiAiListener
     	{
     		case "lightsOn":
     		{
+    			String append = "";
+				
     			try 
         		{
     				Hue.lightsOn();
-    				text = "Done! " + EmojiParser.parseToUnicode(":sunny:");
+    				
+    				if(autoMode)
+    					append = "\nModalita' automatica disattivata!";
+    				autoMode = false;
+    				
+    				text = "Done! " + EmojiParser.parseToUnicode(":sunny:") + append;
+    				
     			} 
         		catch (HueException e) 
         		{
@@ -71,19 +78,28 @@ public class ApiAiListener
     		}
     		case "lightsOff":
     		{
+    			String append = "";
+    			
     			try 
         		{
     				Hue.lightsOff();
-    				text = "Done! " + EmojiParser.parseToUnicode(":waning_crescent_moon:");
+    				
+    				if(autoMode)
+    					append = "\nModalita' automatica disattivata!";
+    				autoMode = false;
+    				
+    				text = "Done! " + EmojiParser.parseToUnicode(":waning_crescent_moon:") + append;
     			} 
         		catch (HueException e) 
         		{
     				text += e.getMessage();
     			}
+    			
     			break;
     		}
     		case "lightsPower":
     		{
+    			String append = "";
     			int percentage;
         		String val = input.getResult().getStringParameter("any");
         		if(val.contains("%"))
@@ -93,8 +109,10 @@ public class ApiAiListener
         		
         		try 
         		{
+        			if(autoMode)
+        				append = "\nModalita' automatica disattivata!";
         			Hue.lightsPower(percentage);
-    				text = "Done! " + EmojiParser.parseToUnicode(":waning_crescent_moon:");
+    				text = "Done! " + EmojiParser.parseToUnicode(":waning_crescent_moon:") + append;
     			} 
         		catch (HueException e) 
         		{
@@ -279,6 +297,33 @@ public class ApiAiListener
 				}
 				break;
 			}
+    		case "setLightsReset":
+    		{
+    			try
+    			{
+    				resetTimes();
+    				text = "Regole cancellate! ";
+    			}
+    			catch (Exception e)
+				{
+					text += e.getMessage();
+				}
+				break;
+    		}
+    		case "autoModeOn":
+    		{
+    			autoMode = true;
+    			text = "Modalita' automatica attivata! ";
+    			
+    			break;
+    		}
+    		case "autoModeOff":
+    		{
+    			autoMode = false;
+    			text = "Modalita' automatica disattivata! ";
+    			
+    			break;
+    		}
     		default:
     		{
     			text = "Instruction not recognised";
@@ -288,6 +333,14 @@ public class ApiAiListener
     	output.setSpeech(text);
     	output.setDisplayText(text);
 	}
+    
+    private static void resetTimes() throws Exception
+    {
+    	PrintWriter writer = new PrintWriter(LIGHTS_TIMES_FILE);
+    	
+    	writer.write("");
+    	writer.close();
+    }
 
     private static void writeTimes(String start, String end) throws Exception
 	{
@@ -301,8 +354,8 @@ public class ApiAiListener
 		long endHour = Long.parseLong(tmpEnd[0]);
 		long endMin = Long.parseLong(tmpEnd[1]);
 
-		startMillisec = (startMin * 60 * 1000) + (startHour * 60 * 60 * 1000);
-		endMillisec = (endMin * 60 * 1000) + (endHour * 60 * 60 * 1000);
+		startMillisec = (startMin * 60) + (startHour * 60 * 60);
+		endMillisec = (endMin * 60) + (endHour * 60 * 60);
 
 		writer.println(startMillisec + ", " + endMillisec);
 		writer.close();

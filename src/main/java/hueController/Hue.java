@@ -82,7 +82,7 @@ public class Hue
        	if (allLights.containsKey("1")) 
 		{
 			String callURL = lightsURL + "1" + "/state";
-			String body = "{ \"on\" : true, \"hue\" : 46920 }";
+			String body = "{ \"on\" : true, \"hue\" : 46920, \"sat\" : 255 }";
 			HttpClientUtil.put(callURL, body, "application/json");
 			isOn = true;
 		}
@@ -97,7 +97,7 @@ public class Hue
        	if (allLights.containsKey("1")) 
 		{
 			String callURL = lightsURL + "1" + "/state";
-			String body = "{ \"on\" : true, \"hue\" : 65535 }";
+			String body = "{ \"on\" : true, \"hue\" : 65535, \"sat\" : 255}";
 			HttpClientUtil.put(callURL, body, "application/json");
 			isOn = true;
 		}

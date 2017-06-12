@@ -198,6 +198,7 @@ public class ZWave
     	}
     }
     
+    /*
     public static void getAllDevices()
     {
     	//get all the Z-Wave devices
@@ -234,7 +235,7 @@ public class ZWave
         }
     }
 
-    /*
+    
     public static void turnAllOff()
     {
     	DeviceList allDevices = zwayApi.getDevices();
