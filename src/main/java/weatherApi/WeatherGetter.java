@@ -15,10 +15,12 @@ public class WeatherGetter
 		 ** 7 days weather for US ZipCode 07112
 		    http://api.apixu.com/v1/forecast.json?key=<YOUR_API_KEY>&q=07112&days=7
 		    =>baseURL+forecast+key+query+zip+days+ndays
-
+		    
+		 ** search for cities starting with Lond
+		 	http://api.apixu.com/v1/search.json?key=<YOUR_API_KEY>&q=lond
+		 	baseURL+today+key+query+city
 		 */
-	
-	
+
 	//private static String today = "current.json?key=";
 	private static String baseURL = "http://api.apixu.com/v1/current.json?key=bdd434f5875b481e92f142643170806&q=";
 	private static String URL = "http://api.apixu.com/v1/forecast.json?key=bdd434f5875b481e92f142643170806&q=";
@@ -49,8 +51,7 @@ public class WeatherGetter
 
 	public static String getForecast() 
 	{
-		
+		return null;
 	}
-	
-	
+
 }

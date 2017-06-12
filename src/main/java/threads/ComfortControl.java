@@ -9,7 +9,11 @@ public class ComfortControl extends Thread
 {
 	private final float COMFORT_TEMPERATURE = 26;	//gradi
 	private final float TOOHOT_TEMPERATURE = 27;	//gradi
-	private final int FREQUENCY = 3600;
+	private final int FREQUENCY = 108000;
+	private final float DELTA = 1;
+	private final float MIN_CONFORT_LUX = 250;
+	private final float MAX_CONFORT_LUX = 350;
+
 	
 	/*
 	RANGE DI LUMINOSITA':
@@ -26,17 +30,26 @@ public class ComfortControl extends Thread
 	public void run()
 	{
 		while(true)
-		{	
+		{
+
 			try
 			{
 				sleep(FREQUENCY);
-				Hue.lightsOff();
+				/*
+				//controlla se è nelle ore in cui deve girare
+				if(false...se non è nelle sua ora, aspetta ancora il ciclo) //oppure appena legge l'ora in cui agire, fa la sleep fino all'ora giusta
+					break; //o sleep (secondi che mancano alla data...
+					*/
 			}
-			catch (InterruptedException | HueException e)
+			catch (Exception e)
 			{
 				e.printStackTrace();
 			}
-			
+
+			// SALVA INTENSITA' DELLA LUCE DA SETTARE DOPO
+			float lux = Float.parseFloat(ZWave.getLuminosity(ApiAiListener.sensorNodeId).split(" ")[0]);
+			  //if((lux < MAX_CONFORT_LUX) && (lux > MIN_CONFORT_LUX))
+
 			// CONTROLLA TEMPERATURA E DA CORRENTE ALLA PRESA DELLA STUFETTA e ACCENDE LE LUCI CON DIVERSO COLORE
 			String temperature = ZWave.getTemperature(ApiAiListener.sensorNodeId);
 			float tempNumb= Float.parseFloat(temperature.substring(0, temperature.length()-3));
@@ -45,7 +58,19 @@ public class ComfortControl extends Thread
 			{
 				try 
 				{
+					//accende la presa della stufetta solo se non è già accesa
+					float power = Float.parseFloat(ZWave.getPower(ApiAiListener.plugNodeId));
+
+					//se la potenza misurata è circa 0, la stufa non è ancora accesa quindi la accende
+					if(Math.abs(power - 0) <= DELTA)
+					{
+						ZWave.plugOn(ApiAiListener.plugNodeId);
+					}
+
+					//invece la hue si accende incondizionatamente, indica che fa freddo
+
 					ZWave.plugOn(ApiAiListener.plugNodeId);
+
 					Hue.cold();
 				} 
 				catch (HueException e) 

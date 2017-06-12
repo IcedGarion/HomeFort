@@ -2,6 +2,10 @@ package httpServer;
 
 import static spark.Spark.post;
 import weatherApi.WeatherGetter;
+
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.PrintWriter;
 import java.time.LocalDateTime;
 import com.google.gson.Gson;
 import com.vdurmont.emoji.EmojiParser;
@@ -17,8 +21,8 @@ import zWaveController.ZWave;
 public class ApiAiListener
 {
 	public static int sensorNodeId = 5;
-	public static int plugNodeId = 3;	//3 Ã¨ safety home
-	
+	public static int plugNodeId = 3;	//3 è safety home
+	public final static String LIGHTS_TIMES_FILE = "resources/lightsTimes";
 	
 	
 	
@@ -247,7 +251,7 @@ public class ApiAiListener
     				String[] x = extWeat.split(" ");
     				text = x[2];
     				text += " " + setEmoji(x[1]);
-    				text += " "+x[0]+"Â° C";
+    				text += " "+x[0]+"° C";
     			}
     			else
     			{
@@ -255,6 +259,22 @@ public class ApiAiListener
     			}
     			break;
     		}
+    		case "setLights":
+			{
+				try
+				{
+					String start = input.getResult().getStringParameter("start");
+					String end = input.getResult().getStringParameter("end");
+
+					writeTimes(start, end);
+					text = "Regola impostata! ";
+				}
+				catch (Exception e)
+				{
+					text += e.getMessage();
+				}
+				break;
+			}
     		default:
     		{
     			text = "Instruction not recognised";
@@ -265,7 +285,24 @@ public class ApiAiListener
     	output.setDisplayText(text);
 	}
 
+    private static void writeTimes(String start, String end) throws Exception
+	{
+		//trasforma inizio e fine in milisecondi, a partire da 00:00 e salva i due valori in un file
+		long startMillisec, endMillisec;
+		PrintWriter writer = new PrintWriter(new BufferedWriter(new FileWriter(LIGHTS_TIMES_FILE, true)));
+		String tmpStart[] = start.split(":");
+		String tmpEnd[] = end.split(":");
+		long startHour = Long.parseLong(tmpStart[0]);
+		long startMin = Long.parseLong(tmpStart[1]);
+		long endHour = Long.parseLong(tmpEnd[0]);
+		long endMin = Long.parseLong(tmpEnd[1]);
 
+		startMillisec = (startMin * 60 * 1000) + (startHour * 60 * 60 * 1000);
+		endMillisec = (endMin * 60 * 1000) + (endHour * 60 * 60 * 1000);
+
+		writer.println(startMillisec + ", " + endMillisec);
+		writer.close();
+	}
 
 	private static String setEmoji(String code) 
 	{

@@ -11,6 +11,12 @@ import java.util.List;
 import java.util.Map;
 
 
+
+/* 	TOGLIERE TUTTI I PARAMETRI AI METODI!
+	ID DI PRESA E LUCE VENGONO SETTATI SOLO NELLA INIT, INUTILE CHIEDERLO SEMPRE
+ */
+
+
 public class ZWave
 {
 	private static IZWayApi zwayApi;
@@ -152,6 +158,18 @@ public class ZWave
 		text += "Consumo : " + measurements.get("consumption") + "\n";
 		
 		return text;
+	}
+
+	public static String getPower(int plugNodeId)
+	{
+		Map<String, String> measures = getPlugMeasurements(plugNodeId);
+		return measures.get("power");
+	}
+
+	public static String getConsumption(int plugNodeId)
+	{
+		Map<String, String> measures = getPlugMeasurements(plugNodeId);
+		return measures.get("consumption");
 	}
     
     public static void plugOn(int plugNodeId)
