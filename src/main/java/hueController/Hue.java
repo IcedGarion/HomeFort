@@ -8,6 +8,7 @@ public class Hue
 	
 	  private static String baseURL = "http://172.30.1.138";
 	  private static String username = "lqo778nsVu54Kb1mSLa6pyIGPysfxYzQdt5litQR";
+	  public static boolean isOn = false;
 	  
 
 	 //EMULATOR CONFIGURATIONS
@@ -28,7 +29,6 @@ public class Hue
     	allLights = HttpClientUtil.get(lightsURL);
     }
     
-	//GLI SI DOVR� PASSARE COME PARAMETRO IL USERNAME TOKEN?
     public static void lightsOn() throws HueException 
     {
     	init();
@@ -36,12 +36,14 @@ public class Hue
        	if (allLights.containsKey("1")) 
 		{
 			String callURL = lightsURL + "1" + "/state";
-			String body = "{ \"on\" : true, \"sat\":0 }";
+			String body = "{ \"on\" : true, \"sat\":0, \"bri\" : 255 }";
 			HttpClientUtil.put(callURL, body, "application/json");
+			isOn = true;
 		}
 		else
 			throw new HueException("No lights found!");
     }
+    
     public static void lightsOff() throws HueException 
     {
     	init();
@@ -51,6 +53,7 @@ public class Hue
 			String callURL = lightsURL + "1" + "/state";
 			String body = "{ \"on\" : false}";
 			HttpClientUtil.put(callURL, body, "application/json");
+			isOn = false;
 		}
 		else
 			throw new HueException("No lights found!");
@@ -81,6 +84,7 @@ public class Hue
 			String callURL = lightsURL + "1" + "/state";
 			String body = "{ \"on\" : true, \"hue\" : 46920 }";
 			HttpClientUtil.put(callURL, body, "application/json");
+			isOn = true;
 		}
 		else
 			throw new HueException("No lights found!");
@@ -95,6 +99,7 @@ public class Hue
 			String callURL = lightsURL + "1" + "/state";
 			String body = "{ \"on\" : true, \"hue\" : 65535 }";
 			HttpClientUtil.put(callURL, body, "application/json");
+			isOn = true;
 		}
 		else
 			throw new HueException("No lights found!");

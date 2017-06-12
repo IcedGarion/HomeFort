@@ -21,9 +21,11 @@ import zWaveController.ZWave;
 public class ApiAiListener
 {
 	public static int sensorNodeId = 5;
-	public static int plugNodeId = 3;	//3 è safety home
+	public static int plugNodeId = 19;	//3 è safety home
 	public final static String LIGHTS_TIMES_FILE = "resources/lightsTimes";
-	
+	public static boolean autoMode = false;
+	//auto mode: dice che deve intervenire comfortControl e LightControl (quindi regola luci come vuole)
+	//viene impostata con un comando apposito, e inoltre se utente accende la luce viene disattivata! (+ avvisa utente)
 	
 	
 	//da fare, magari, lista dei soli sensori/plug ID che hai?
@@ -180,7 +182,7 @@ public class ApiAiListener
         			
         			if(motion.equals("ERRORE"))
         				text = "Nessun dispositivo trovato";
-        			else if(motion.toLowerCase().startsWith("on"))
+        			else if(motion.toLowerCase().startsWith("off"))
         				text = "Nessun movimento ";
         			else
         				text = "C'e' movimento nella stanza ";
@@ -189,6 +191,8 @@ public class ApiAiListener
         		{
     				text += e.getMessage();
     			}
+        		
+        		break;
     		}
     		case "sensorInfo":
     		{

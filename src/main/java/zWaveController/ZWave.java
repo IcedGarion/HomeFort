@@ -154,7 +154,7 @@ public class ZWave
 		String text = "";
 		Map<String, String> measurements = getPlugMeasurements(sensorNodeId);
 		
-		text += "Potenza : " + measurements.get("meterElectric_watt") + "\n";
+		text += "Potenza : " + measurements.get("power") + "\n";
 		text += "Consumo : " + measurements.get("consumption") + "\n";
 		
 		return text;

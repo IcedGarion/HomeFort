@@ -35,11 +35,6 @@ public class ComfortControl extends Thread
 			try
 			{
 				sleep(FREQUENCY);
-				/*
-				//controlla se Ã¨ nelle ore in cui deve girare
-				if(false...se non Ã¨ nelle sua ora, aspetta ancora il ciclo) //oppure appena legge l'ora in cui agire, fa la sleep fino all'ora giusta
-					break; //o sleep (secondi che mancano alla data...
-					*/
 			}
 			catch (Exception e)
 			{
@@ -49,8 +44,14 @@ public class ComfortControl extends Thread
 			// SALVA INTENSITA' DELLA LUCE DA SETTARE DOPO
 			float lux = Float.parseFloat(ZWave.getLuminosity(ApiAiListener.sensorNodeId).split(" ")[0]);
 			  //if((lux < MAX_CONFORT_LUX) && (lux > MIN_CONFORT_LUX))
+			
+			
+			
+			
+			
+			
 
-			// CONTROLLA TEMPERATURA E DA CORRENTE ALLA PRESA DELLA STUFETTA e ACCENDE LE LUCI CON DIVERSO COLORE
+			// CONTROLLA TEMPERATURA
 			String temperature = ZWave.getTemperature(ApiAiListener.sensorNodeId);
 			float tempNumb= Float.parseFloat(temperature.substring(0, temperature.length()-3));
 			
@@ -67,7 +68,7 @@ public class ComfortControl extends Thread
 						ZWave.plugOn(ApiAiListener.plugNodeId);
 					}
 
-					//invece la hue si accende incondizionatamente, indica che fa freddo
+					//regola intensità della luce solo se si è in auto_mode e se c'è una luce accesa
 
 					ZWave.plugOn(ApiAiListener.plugNodeId);
 
