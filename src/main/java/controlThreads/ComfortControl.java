@@ -1,4 +1,4 @@
-package threads;
+package controlThreads;
 
 import httpServer.ApiAiListener;
 import hueController.Hue;
@@ -45,7 +45,7 @@ public class ComfortControl extends Thread
 			lightPower = computeBestPower();  
 
 			// CONTROLLA TEMPERATURA
-			String temperature = ZWave.getTemperature(ApiAiListener.sensorNodeId);
+			String temperature = ZWave.getTemperature();
 			float tempNumb= Float.parseFloat(temperature.substring(0, temperature.length()-3));
 			
 			//temperatura troppo bassa
@@ -53,17 +53,17 @@ public class ComfortControl extends Thread
 			{
 				try 
 				{
-					//accende la presa della stufetta solo se non è già  accesa
-					plugPower = Float.parseFloat(ZWave.getPower(ApiAiListener.plugNodeId));
+					//accende la presa della stufetta solo se non ï¿½ giï¿½ accesa
+					plugPower = Float.parseFloat(ZWave.getPower());
 
 					//se la potenza misurata Ã¨ circa 0, la stufa non Ã¨ ancora accesa quindi la accende
 					if(plugPower <= 0)
 					{
-						ZWave.plugOn(ApiAiListener.plugNodeId);
+						ZWave.plugOn();
 					}
 
-					//regola intensità della luce solo se si è in auto_mode e se c'è una luce accesa
-					if(ApiAiListener.autoMode && Hue.isOn)
+					//regola intensitï¿½ della luce solo se si ï¿½ in auto_mode e se c'ï¿½ una luce accesa
+					if(LightControl.autoMode && Hue.isOn)
 					{
 						//POWER CALCOLATO PRIMA! Hue.lightsPower(lightPower);
 						Hue.cold();
@@ -80,15 +80,15 @@ public class ComfortControl extends Thread
 				try 
 				{
 					//accende la presa della stufetta solo se non Ã¨ giÃ  accesa
-					plugPower = Float.parseFloat(ZWave.getPower(ApiAiListener.plugNodeId));
+					plugPower = Float.parseFloat(ZWave.getPower());
 
-					//se la potenza misurata è < 0, la stufa è già spenta
+					//se la potenza misurata ï¿½ < 0, la stufa ï¿½ giï¿½ spenta
 					if(plugPower >= 0)
 					{
-						ZWave.plugOff(ApiAiListener.plugNodeId);
+						ZWave.plugOff();
 					}
 					
-					if(ApiAiListener.autoMode && Hue.isOn)
+					if(LightControl.autoMode && Hue.isOn)
 					{
 						//POWER CALCOLATO PRIMA! Hue.lightsPower(lightPower);
 						Hue.hot();
@@ -104,7 +104,7 @@ public class ComfortControl extends Thread
 			{
 				try 
 				{
-					if(ApiAiListener.autoMode && Hue.isOn)
+					if(LightControl.autoMode && Hue.isOn)
 					{
 						//Hue.LightsPower(lightsPower);
 					}
@@ -119,7 +119,8 @@ public class ComfortControl extends Thread
 	
 	public int computeBestPower()
 	{
-		float lux = Float.parseFloat(ZWave.getLuminosity(ApiAiListener.sensorNodeId).split(" ")[0]);
+		//prende la luce togliendo unitÃ  di misura
+		float lux = Float.parseFloat(ZWave.getLuminosity().split(" ")[0]);
 		
 		return 0;
 	}

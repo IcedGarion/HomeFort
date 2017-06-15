@@ -17,8 +17,11 @@ import java.util.Map;
  */
 
 
+
 public class ZWave
 {
+	public static int sensorNodeId = 5;
+	public static int plugNodeId = 19;	//3 � safety home
 	private static IZWayApi zwayApi;
 
     public static void init()
@@ -36,7 +39,7 @@ public class ZWave
     
     
     //SENSOR
-    private static List<Device> getSensor(int sensorNodeId)
+    private static List<Device> getSensor()
     {
     	//get all the Z-Wave devices
         DeviceList allDevices = zwayApi.getDevices();
@@ -47,9 +50,9 @@ public class ZWave
         return tmp;
     }
     
-    public static Map<String, String> getSensorMeasurements(int sensorNodeId)
+    public static Map<String, String> getSensorMeasurements()
     {
-    	List<Device> sensorProbes = getSensor(sensorNodeId);
+    	List<Device> sensorProbes = getSensor();
     	Map<String, String> measures = new HashMap<String, String>();
     	
     	for(Device probe : sensorProbes)
@@ -73,35 +76,35 @@ public class ZWave
     	return measures;
     }
     
-    public static String getTemperature(int sensorNodeId)
+    public static String getTemperature()
     {
-    	Map<String, String> measures = getSensorMeasurements(sensorNodeId);
+    	Map<String, String> measures = getSensorMeasurements();
     	return measures.get("temperature");
     }
       
-    public static String getLuminosity(int sensorNodeId)
+    public static String getLuminosity()
     {
-    	Map<String, String> measures = getSensorMeasurements(sensorNodeId);
+    	Map<String, String> measures = getSensorMeasurements();
     	return measures.get("luminosity");
     }
     
-    public static String getHumidity(int sensorNodeId)
+    public static String getHumidity()
     {
 
-    	Map<String, String> measures = getSensorMeasurements(sensorNodeId);
+    	Map<String, String> measures = getSensorMeasurements();
    	   	return measures.get("humidity");
     }
     
-    public static String getMotion(int sensorNodeId)
+    public static String getMotion()
     {
-    	Map<String, String> measures = getSensorMeasurements(sensorNodeId);
+    	Map<String, String> measures = getSensorMeasurements();
     	return measures.get("motion");
     }
 
-    public static String renderSensorMeasurements(int sensorNodeId)
+    public static String renderSensorMeasurements()
 	{
 		String text = "", motion = "0";
-		Map<String, String> measurements = getSensorMeasurements(sensorNodeId);
+		Map<String, String> measurements = getSensorMeasurements();
 		
 		text += "temperatura : " + measurements.get("temperature") + "\n";
 		text += "luminosita' : " + measurements.get("luminosity") + "\n";
@@ -118,7 +121,7 @@ public class ZWave
     
     
     //PLUGS
-    private static List<Device> getPlugDevice(int plugNodeId)
+    private static List<Device> getPlugDevice()
     {
     	//get all the Z-Wave devices
         DeviceList allDevices = zwayApi.getDevices();
@@ -129,10 +132,10 @@ public class ZWave
         return tmp;
     }
     
-    public static Map<String, String> getPlugMeasurements(int plugNodeId)
+    public static Map<String, String> getPlugMeasurements()
     {
     	//prende tutti i sensori della plug
-    	List<Device> plugProbes = getPlugDevice(plugNodeId);
+    	List<Device> plugProbes = getPlugDevice();
     	Map<String, String> measures = new HashMap<String, String>();
     	
     	for(Device probe : plugProbes)
@@ -149,10 +152,10 @@ public class ZWave
     	return measures;
     }
     
-    public static String renderPlugMeasurements(int sensorNodeId)
+    public static String renderPlugMeasurements()
 	{
 		String text = "";
-		Map<String, String> measurements = getPlugMeasurements(sensorNodeId);
+		Map<String, String> measurements = getPlugMeasurements();
 		
 		text += "Potenza : " + measurements.get("power") + "\n";
 		text += "Consumo : " + measurements.get("consumption") + "\n";
@@ -160,21 +163,21 @@ public class ZWave
 		return text;
 	}
 
-	public static String getPower(int plugNodeId)
+	public static String getPower()
 	{
-		Map<String, String> measures = getPlugMeasurements(plugNodeId);
+		Map<String, String> measures = getPlugMeasurements();
 		return measures.get("power");
 	}
 
-	public static String getConsumption(int plugNodeId)
+	public static String getConsumption()
 	{
-		Map<String, String> measures = getPlugMeasurements(plugNodeId);
+		Map<String, String> measures = getPlugMeasurements();
 		return measures.get("consumption");
 	}
     
-    public static void plugOn(int plugNodeId)
+    public static void plugOn()
     {
-    	List<Device> plugProbes = getPlugDevice(plugNodeId);
+    	List<Device> plugProbes = getPlugDevice();
     	
     	for(Device probe : plugProbes)
     	{
@@ -185,9 +188,9 @@ public class ZWave
     	}
     }
     
-    public static void plugOff(int plugNodeId)
+    public static void plugOff()
     {
-    	List<Device> plugProbes = getPlugDevice(plugNodeId);
+    	List<Device> plugProbes = getPlugDevice();
     	
     	for(Device probe : plugProbes)
     	{
