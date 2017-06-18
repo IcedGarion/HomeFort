@@ -17,13 +17,18 @@ public class ApiUtil
 	
 	public static String convertEmoji(String code) 
 	{
+		return EmojiParser.parseToUnicode(convertIntoCategory(code));
+	}
+	
+	public static String convertIntoCategory(String code)
+	{
 		int emojiCode=(int) Float.parseFloat(code);
 		
 		switch(emojiCode)
 		{
 			case 1000:
 			{
-				return EmojiParser.parseToUnicode(":sunny:");
+				return (":sunny:");
 			}
 			case 1003:
 			case 1006:

@@ -75,6 +75,12 @@ public class CommandExecuter
         		String val = input.getResult().getStringParameter("number");
         		percentage = Integer.parseInt(val);
         		
+        		if(percentage < 0 || percentage > 100)
+        		{
+        			text = "Devi inserire una percentuale (0 - 100)";
+        			break;
+        		}
+        		
         		try 
         		{
         			if(LightControl.autoMode)
@@ -240,8 +246,11 @@ public class CommandExecuter
     				{
     					String extWeat=WeatherGetter.getExternalWeather();
     					String[] x = extWeat.split(" ");
+    					//descrizione condizione (sunny, cloudy..)
     					text = x[2];
+    					//codice emoji
     					text += " " + ApiUtil.convertEmoji(x[1]);
+    					//temperatura esterna
     					text += " "+x[0]+"� C";
     				}
     				else if(days ==3)

@@ -10,14 +10,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
-
-/* 	TOGLIERE TUTTI I PARAMETRI AI METODI!
-	ID DI PRESA E LUCE VENGONO SETTATI SOLO NELLA INIT, INUTILE CHIEDERLO SEMPRE
- */
-
-
-
 public class ZWave
 {
 	public static int sensorNodeId = 5;
@@ -200,61 +192,4 @@ public class ZWave
     		}
     	}
     }
-    
-    /*
-    public static void getAllDevices()
-    {
-    	//get all the Z-Wave devices
-    	DeviceList allDevices = zwayApi.getDevices();
-        
-        // search all sensors
-        for (Device dev : allDevices.getAllDevices())
-        {
-            if (dev.getDeviceType().equalsIgnoreCase("SensorMultilevel"))
-            {
-            	 System.out.println("Device " + dev.getNodeId() + " is a " + dev.getDeviceType());
-
-                 if (dev.getProbeType().equalsIgnoreCase("temperature")) 
-                 {
-                     System.out.println(dev.getMetrics().getProbeTitle() + " level: " + dev.getMetrics().getLevel() + " " + dev.getMetrics().getScaleTitle());
-                 } 
-                 else if (dev.getProbeType().equalsIgnoreCase("meterElectric_watt")) 
-                 {
-                     System.out.println(dev.getMetrics().getProbeTitle() + " level: " + dev.getMetrics().getLevel() + " " + dev.getMetrics().getScaleTitle());
-                 } 
-                 else 
-                 {
-                     System.out.println(dev.getMetrics().getProbeTitle() + " level: " + dev.getMetrics().getLevel() + " uom: " + dev.getMetrics().getScaleTitle());
-                 }
-            }
-            else if(dev.getDeviceType().equalsIgnoreCase("SwitchBinary"))
-            {
-            	System.out.println("Device " + dev.getNodeId() + " is a " + dev.getDeviceType());
-            }
-            else if(dev.getDeviceType().equalsIgnoreCase("SensorBinary"))
-            {
-            	System.out.println("Device " + dev.getNodeId() + " is a " + dev.getDeviceType());
-            }
-        }
-    }
-
-    
-    public static void turnAllOff()
-    {
-    	DeviceList allDevices = zwayApi.getDevices();
-    	
-        // search again all power outlets
-        for (Device dev : allDevices.getAllDevices()) {
-            if (dev.getDeviceType().equalsIgnoreCase("SwitchBinary")) {
-                logger.debug("Device " + dev.getNodeId() + " is a " + dev.getDeviceType());
-                // turn it off
-                logger.info("Turn device " + dev.getNodeId() + " off...");
-                dev.off();
-            }
-        }
-    }
-
-
-    */
-
 }
