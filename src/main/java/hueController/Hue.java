@@ -21,7 +21,6 @@ public class Hue
 
 	// base URL for lights
     private static String lightsURL = baseURL + "/api/" + username + "/lights/";
-    
     private static Map<String, ?> allLights;
     
 

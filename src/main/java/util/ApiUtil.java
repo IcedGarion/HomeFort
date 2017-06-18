@@ -8,10 +8,10 @@ public class ApiUtil
     {
     	String text="";
 
-			text += "Previsioni per il giorno: "+x[1];
-			text += "\nTemperatura massima: "+x[3]+"° C\nTemperatura minima: "+x[5];
-			text += "° C\nSarà "+x[7]+" "+convertEmoji(x[9]);
-			text += "\nIl sole sorgerà alle "+x[11]+" e tramonterà alle "+x[13];
+			text += "Forecasts for: "+x[1];
+			text += "\nMaximum Temperature: "+x[3]+"° C\nMinimum Temperature: "+x[5];
+			text += "° C\nIt will be "+x[7]+" "+convertEmoji(x[9]);
+			text += "\nSun will rise at "+x[11]+" and set at "+x[13];
     	return text;
 	}
 	

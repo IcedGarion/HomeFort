@@ -20,7 +20,7 @@ public class CommandExecuter
 	
     public static void doWebHook(AIResponse input, Fulfillment output)
     {
-    	String text = "ERRORE ";
+    	String text = "ERROR ";
     	String action = input.getResult().getAction();
     	
     	
@@ -35,10 +35,10 @@ public class CommandExecuter
     				Hue.lightsOn();
     				
     				if(LightControl.autoMode)
-    					append = "\nModalita' automatica disattivata!";
+    					append = "\nAutomode Off!";
     				LightControl.autoMode = false;
     				
-    				text = "Done! " + EmojiParser.parseToUnicode(":sunny:") + append;
+    				text = "Lights are On! " + EmojiParser.parseToUnicode(":sunny:") + append;
     				
     			} 
         		catch (HueException e) 
@@ -56,10 +56,10 @@ public class CommandExecuter
     				Hue.lightsOff();
     				
     				if(LightControl.autoMode)
-    					append = "\nModalita' automatica disattivata!";
+    					append = "\nAutomode Off!";
     				LightControl.autoMode = false;
     				
-    				text = "Done! " + EmojiParser.parseToUnicode(":waning_crescent_moon:") + append;
+    				text = "Lights are Off! " + EmojiParser.parseToUnicode(":new_moon:") + append;
     			} 
         		catch (HueException e) 
         		{
@@ -74,19 +74,20 @@ public class CommandExecuter
     			int percentage;
         		String val = input.getResult().getStringParameter("number");
         		percentage = Integer.parseInt(val);
+        	
         		
         		if(percentage < 0 || percentage > 100)
         		{
-        			text = "Devi inserire una percentuale (0 - 100)";
+        			text = "You must insert a percentage (0 - 100)";
         			break;
         		}
-        		
+
         		try 
         		{
         			if(LightControl.autoMode)
-        				append = "\nModalita' automatica disattivata!";
+        				append = "\nAutomode Off!";
         			Hue.lightsPower(percentage);
-    				text = "Done! " + EmojiParser.parseToUnicode(":waning_crescent_moon:") + append;
+    				text = "Lights set at " + percentage +"%"+ append;
     			} 
         		catch (HueException e) 
         		{
@@ -118,7 +119,7 @@ public class CommandExecuter
         			if(temperature.equals("ERRORE"))
         				text = "No device found";
         			else
-        				text = "La temperatura e' " + temperature;
+        				text = "Temperature: " + temperature+"° C";
         		}
         		catch (Exception e) 
         		{
@@ -135,9 +136,9 @@ public class CommandExecuter
         			luminosity = ZWave.getLuminosity();
         			
         			if(luminosity.equals("ERRORE"))
-        				text = "Nessun dispositivo trovato";
+        				text = "No device found";
         			else
-        				text = "La luminosita' e' " + luminosity;
+        				text = "Luminosity is " + luminosity+" Lux";
         		}
         		catch (Exception e) 
         		{
@@ -154,9 +155,9 @@ public class CommandExecuter
         			humidity = ZWave.getHumidity();
         			
         			if(humidity.equals("ERRORE"))
-        				text = "Nessun dispositivo trovato";
+        				text = "No device found";
         			else
-        				text = "L'umidita' e' " + humidity;
+        				text = "Humidity is " + humidity+"%";
         		}
         		catch (Exception e) 
         		{
@@ -173,11 +174,11 @@ public class CommandExecuter
         			motion = ZWave.getMotion();
         			
         			if(motion.equals("ERRORE"))
-        				text = "Nessun dispositivo trovato";
+        				text = "No device found";
         			else if(motion.toLowerCase().startsWith("off"))
-        				text = "Nessun movimento ";
+        				text = "There's no one in the room ";
         			else
-        				text = "C'e' movimento nella stanza ";
+        				text = "There's someone in the room ";
         		}
         		catch (Exception e) 
         		{
@@ -215,7 +216,7 @@ public class CommandExecuter
     			try
         		{
         			ZWave.plugOn();
-        			text = "Presa Accesa! ";
+        			text = "Plug is on! ";
         		}
         		catch (Exception e) 
         		{
@@ -228,7 +229,7 @@ public class CommandExecuter
     			try
         		{
         			ZWave.plugOff();
-        			text = "Presa Spenta! ";
+        			text = "Plug is off! ";
         		}
         		catch (Exception e) 
         		{
@@ -246,11 +247,8 @@ public class CommandExecuter
     				{
     					String extWeat=WeatherGetter.getExternalWeather();
     					String[] x = extWeat.split(" ");
-    					//descrizione condizione (sunny, cloudy..)
     					text = x[2];
-    					//codice emoji
     					text += " " + ApiUtil.convertEmoji(x[1]);
-    					//temperatura esterna
     					text += " "+x[0]+"� C";
     				}
     				else if(days ==3)
@@ -277,7 +275,7 @@ public class CommandExecuter
     					
     				}
     				else
-    					text += " Previsione massima 3 giorni";
+    					text += " Maximum forecast supported: 3 days";
     			break;
     		}
     		case "setLights":
@@ -293,7 +291,7 @@ public class CommandExecuter
 					writer.setData(start, end);
 					writer.start();
 					
-					text = "Regola impostata: " + start  + " - " +  end;
+					text = "Rule set: " + start  + " - " +  end;
 				}
 				catch (Exception e)
 				{
@@ -309,7 +307,7 @@ public class CommandExecuter
     				writer = new Writer();
     				writer.reset(true);
     				writer.start();
-    				text = "Regole cancellate! ";
+    				text = "Rules deleted! ";
     			}
     			catch (Exception e)
 				{
@@ -320,14 +318,14 @@ public class CommandExecuter
     		case "autoModeOn":
     		{
     			LightControl.autoMode = true;
-    			text = "Modalita' automatica attivata! ";
+    			text = "Automode on! ";
     			
     			break;
     		}
     		case "autoModeOff":
     		{
     			LightControl.autoMode = false;
-    			text = "Modalita' automatica disattivata! ";
+    			text = "Automode Off! ";
     			
     			break;
     		}
