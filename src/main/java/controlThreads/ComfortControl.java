@@ -35,24 +35,18 @@ public class ComfortControl extends Thread
 			try
 			{
 				sleep(FREQUENCY);
-			}
-			catch (Exception e)
-			{
-				e.printStackTrace();
-			}
-
-			// SALVA INTENSITA' DELLA LUCE DA SETTARE DOPO
-			lightPower = computeBestPower();  
-
-			// CONTROLLA TEMPERATURA
-			String temperature = ZWave.getTemperature();
-			float tempNumb= Float.parseFloat(temperature.substring(0, temperature.length()-3));
 			
-			//temperatura troppo bassa
-			if(tempNumb < (COMFORT_TEMPERATURE - DELTA_GRADES))
-			{
-				try 
+				// SALVA INTENSITA' DELLA LUCE DA SETTARE DOPO
+				lightPower = computeBestPower();  
+
+				// CONTROLLA TEMPERATURA
+				String temperature = ZWave.getTemperature();
+				float tempNumb= Float.parseFloat(temperature.substring(0, temperature.length()-3));
+			
+				//temperatura troppo bassa
+				if(tempNumb < (COMFORT_TEMPERATURE - DELTA_GRADES))
 				{
+				
 					//accende la presa della stufetta solo se non � gi� accesa
 					plugPower = Float.parseFloat(ZWave.getPower());
 
@@ -68,55 +62,44 @@ public class ComfortControl extends Thread
 						//POWER CALCOLATO PRIMA! Hue.lightsPower(lightPower);
 						Hue.cold();
 					}
-				} 
-				catch (HueException e) 
-				{
-					e.printStackTrace();
 				}
-			}
-			//temperatura troppo alta
-			else if(tempNumb > (COMFORT_TEMPERATURE + DELTA_GRADES))
-			{
-				try 
+				//temperatura troppo alta
+				else if(tempNumb > (COMFORT_TEMPERATURE + DELTA_GRADES))
 				{
-					//accende la presa della stufetta solo se non è già accesa
-					plugPower = Float.parseFloat(ZWave.getPower());
-
-					//se la potenza misurata � < 0, la stufa � gi� spenta
-					if(plugPower >= 0)
-					{
-						ZWave.plugOff();
-					}
+					//	accende la presa della stufetta solo se non è già accesa
+						plugPower = Float.parseFloat(ZWave.getPower());
+						
+					//	se la potenza misurata � < 0, la stufa � gi� spenta
+						if(plugPower >= 0)
+						{	
+							ZWave.plugOff();
+						}
+						
+						if(LightControl.autoMode && Hue.isOn)
+						{
+						//	POWER CALCOLATO PRIMA! Hue.lightsPower(lightPower);
+							Hue.hot();
+						}
+				}
+			//	temperatura ok
+				else
+				{	
 					
 					if(LightControl.autoMode && Hue.isOn)
 					{
-						//POWER CALCOLATO PRIMA! Hue.lightsPower(lightPower);
-						Hue.hot();
+					//	Hue.LightsPower(lightsPower);
 					}
-				} 
-				catch (HueException e) 
-				{
-					e.printStackTrace();
 				}
+				
 			}
-			//temperatura ok
-			else
+			catch (Exception e)
 			{
-				try 
-				{
-					if(LightControl.autoMode && Hue.isOn)
-					{
-						//Hue.LightsPower(lightsPower);
-					}
-				} 
-				catch (Exception e) 
-				{
-					e.printStackTrace();
-				}
+				System.out.println("Probably no connection with ZWave");
+				e.printStackTrace();
 			}
 		}
 	}
-	
+		
 	public int computeBestPower()
 	{
 		//prende la luce togliendo unità di misura

@@ -4,12 +4,22 @@ import com.vdurmont.emoji.EmojiParser;
 
 public class ApiUtil
 {
+	public static String buildWeatherText(String[] x) 
+    {
+    	String text="";
+
+			text += "Previsioni per il giorno: "+x[1];
+			text += "\nTemperatura massima: "+x[3]+"° C\nTemperatura minima: "+x[5];
+			text += "° C\nSarà "+x[7]+" "+convertEmoji(x[9]);
+			text += "\nIl sole sorgerà alle "+x[11]+" e tramonterà alle "+x[13];
+    	return text;
+	}
 	
 	public static String convertEmoji(String code) 
 	{
-		int cd=(int) Float.parseFloat(code);
+		int emojiCode=(int) Float.parseFloat(code);
 		
-		switch(cd)
+		switch(emojiCode)
 		{
 			case 1000:
 			{

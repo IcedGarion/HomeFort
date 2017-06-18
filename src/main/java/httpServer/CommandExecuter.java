@@ -72,11 +72,8 @@ public class CommandExecuter
     		{
     			String append = "";
     			int percentage;
-        		String val = input.getResult().getStringParameter("any");
-        		if(val.contains("%"))
-        			percentage = Integer.parseInt(val.substring(0, val.length()-1));
-        		else
-        			percentage = Integer.parseInt(val);
+        		String val = input.getResult().getStringParameter("number");
+        		percentage = Integer.parseInt(val);
         		
         		try 
         		{
@@ -238,20 +235,40 @@ public class CommandExecuter
     			String city = input.getResult().getStringParameter("any");
     			int days = input.getResult().getIntParameter("number");
     			WeatherGetter.init(city,days);
-    			if(days ==1)
-    			{
-    				String extWeat=WeatherGetter.getExternalWeather();
-    				String[] x = extWeat.split(" ");
-    				text = x[2];
-    				text += " " + ApiUtil.convertEmoji(x[1]);
-    				text += " "+x[0]+"� C";
-    			}
-    			else if(days == 3)
-    			{
-    				String forecast = WeatherGetter.getForecast();
-    			}
-    			else
-    				text += "Previsione massima 3 giorni";
+    			
+    				if(days ==1 )
+    				{
+    					String extWeat=WeatherGetter.getExternalWeather();
+    					String[] x = extWeat.split(" ");
+    					text = x[2];
+    					text += " " + ApiUtil.convertEmoji(x[1]);
+    					text += " "+x[0]+"� C";
+    				}
+    				else if(days ==3)
+    				{
+    					text="";
+    					String forecast = WeatherGetter.getForecast();
+    					String[] fore =forecast.split("\n");
+    					String[] x= new String[14];
+    					String[] y= new String[14];
+    					String[] z= new String[14];
+    					x=fore[0].split("\"");
+    					for(int i=0;i<x.length;i++)
+    						System.out.println(i + " "+x[i]);
+    					y=fore[1].split("\"");
+    					for(int i=0;i<y.length;i++)
+    						System.out.println(i + " "+y[i]);
+    					z=fore[2].split("\"");
+    					for(int i=0;i<z.length;i++)
+    						System.out.println(i +" "+ z[i]);
+    					
+    					text += ApiUtil.buildWeatherText(x)+"\n\n";
+    					text += ApiUtil.buildWeatherText(y)+"\n\n";
+    					text += ApiUtil.buildWeatherText(z);
+    					
+    				}
+    				else
+    					text += " Previsione massima 3 giorni";
     			break;
     		}
     		case "setLights":
