@@ -14,6 +14,8 @@ import zWaveController.ZWave;
 
 public class ApiAiListener
 {	
+	public static int COMFORT_TEMPERATURE = 23;
+	
 	public static void main(String args[]) throws Exception
 	{
 		//inizijalizza convertitore json

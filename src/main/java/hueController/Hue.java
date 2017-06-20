@@ -65,10 +65,7 @@ public class Hue
     	init();
     	
     	if(! isOn)
-    	{
     		lightsOn();
-    		return;
-    	}
 
     	if(value == 0)
     	{
@@ -83,6 +80,7 @@ public class Hue
 			String callURL = lightsURL + "1" + "/state";
 			String body = "{ \"bri\" : "+value+" }";
 			HttpClientUtil.put(callURL, body, "application/json");
+			isOn = true;
 		}
 		else
 			throw new HueException("No lights found!");
@@ -128,6 +126,22 @@ public class Hue
 		{
 			String callURL = lightsURL + "1" + "/state";
 			String body = "{ \"on\" : true, \"hue\" : 65535, \"sat\" : 255}";
+			HttpClientUtil.put(callURL, body, "application/json");
+			isOn = true;
+		}
+		else
+			throw new HueException("No lights found!");
+		
+	}
+	
+	public static void white() throws HueException 
+	{
+		init();
+
+       	if (allLights.containsKey("1")) 
+		{
+			String callURL = lightsURL + "1" + "/state";
+			String body = "{ \"on\" : true, \"sat\" : 0}";
 			HttpClientUtil.put(callURL, body, "application/json");
 			isOn = true;
 		}

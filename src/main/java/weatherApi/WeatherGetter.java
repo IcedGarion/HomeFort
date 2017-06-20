@@ -6,7 +6,7 @@ import hueController.HttpClientUtil;
 
 public class WeatherGetter 
 {
-		//Apixu key bdd434f5875b481e92f142643170806
+		//Apixu key 2a3787deb793405c99181134171206
 		//apixu base url "http://api.apixu.com/v1
 		/* ESEMPI RICHIESTA JSON
 		 ** current weather for London: 
@@ -23,8 +23,8 @@ public class WeatherGetter
 		 */
 
 	//private static String today = "current.json?key=";
-	private static String baseURL = "http://api.apixu.com/v1/current.json?key=bdd434f5875b481e92f142643170806&q=";
-	private static String URL = "http://api.apixu.com/v1/forecast.json?key=bdd434f5875b481e92f142643170806&q=";
+	private static String baseURL = "http://api.apixu.com/v1/current.json?key=2a3787deb793405c99181134171206&q=";
+	private static String URL = "http://api.apixu.com/v1/forecast.json?key=2a3787deb793405c99181134171206&q=";
 	private static String city = "";
 	private static String zip = "13100";
 	private static String days = "&days=";
@@ -34,9 +34,11 @@ public class WeatherGetter
 	{
 		city=cityUser;
 		if(userDays == 1)
-			weather = HttpClientUtil.get(baseURL+city);
+			weather = null;
+			//weather = HttpClientUtil.get(baseURL+city);
 		else
-			weather = HttpClientUtil.get(URL+city+days+userDays);
+			weather = null;
+			//weather = HttpClientUtil.get(URL+city+days+userDays);
 	}
 	
 	public static String getExternalWeather()

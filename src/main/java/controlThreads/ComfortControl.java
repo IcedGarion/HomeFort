@@ -1,12 +1,12 @@
 package controlThreads;
 
+import httpServer.ApiAiListener;
 import hueController.Hue;
 import util.ApiUtil;
 import zWaveController.ZWave;
 
 public class ComfortControl extends Thread 
 {
-	private final float COMFORT_TEMPERATURE = 50;			/*da usare poi un'altro valore: questo è solo per test*/
 	private final float DELTA_GRADES = 1;                   /*da usare poi +- 4*/
 	private final int NORMAL_FREQUENCY = 3000;				/*da usare poi 108000*/
 	private final int HIGH_FREQUENCY = 500;
@@ -40,7 +40,7 @@ public class ComfortControl extends Thread
 				float tempNumb= Float.parseFloat(ZWave.getTemperature().split(" ")[0]);
 			
 				//temperatura troppo bassa
-				if(tempNumb < (COMFORT_TEMPERATURE - DELTA_GRADES))
+				if(tempNumb < (ApiAiListener.COMFORT_TEMPERATURE - DELTA_GRADES))
 				{
 				
 					//accende la presa della stufetta solo se non � gi� accesa
@@ -54,14 +54,14 @@ public class ComfortControl extends Thread
 					}
 
 					//regola intensit� della luce solo se si � in auto_mode e se c'� una luce accesa
-					if(LightControl.autoMode || Hue.isOn)
+					if(Hue.isOn)
 					{
 						Hue.lightsPower(lightPower);
 						Hue.cold();			
 					}
 				}
 				//temperatura troppo alta
-				else if(tempNumb > (COMFORT_TEMPERATURE + DELTA_GRADES))
+				else if(tempNumb > (ApiAiListener.COMFORT_TEMPERATURE + DELTA_GRADES))
 				{
 						//spegne la presa della stufetta solo se non è già spenta
 						plugPower = Float.parseFloat(ZWave.getPower().split(" ")[0]);
@@ -72,7 +72,7 @@ public class ComfortControl extends Thread
 							ZWave.plugOff();
 						}
 						
-						if(LightControl.autoMode || Hue.isOn)
+						if(Hue.isOn)
 						{
 							Hue.lightsPower(lightPower);
 							Hue.hot();	
@@ -81,9 +81,10 @@ public class ComfortControl extends Thread
 				//temperatura ok
 				else
 				{	
-					if(LightControl.autoMode || Hue.isOn)
+					if(Hue.isOn)
 					{
 						Hue.lightsPower(lightPower);
+						Hue.white();
 					}
 				}
 				

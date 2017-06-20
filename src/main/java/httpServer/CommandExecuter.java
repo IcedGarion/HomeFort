@@ -119,7 +119,7 @@ public class CommandExecuter
         			if(temperature.equals("ERRORE"))
         				text = "No device found";
         			else
-        				text = "Temperature: " + temperature+"° C";
+        				text = "Temperature: " + temperature;
         		}
         		catch (Exception e) 
         		{
@@ -138,7 +138,7 @@ public class CommandExecuter
         			if(luminosity.equals("ERRORE"))
         				text = "No device found";
         			else
-        				text = "Luminosity is " + luminosity+" Lux";
+        				text = "Luminosity is " + luminosity;
         		}
         		catch (Exception e) 
         		{
@@ -157,7 +157,7 @@ public class CommandExecuter
         			if(humidity.equals("ERRORE"))
         				text = "No device found";
         			else
-        				text = "Humidity is " + humidity+"%";
+        				text = "Humidity is " + humidity;
         		}
         		catch (Exception e) 
         		{
@@ -239,44 +239,45 @@ public class CommandExecuter
     		}
     		case "getWeather":
     		{
-    			String city = input.getResult().getStringParameter("any");
-    			int days = input.getResult().getIntParameter("number");
-    			WeatherGetter.init(city,days);
+    			try
+    			{
+    				String city = input.getResult().getStringParameter("any");
+    				int days = input.getResult().getIntParameter("number");
+    				WeatherGetter.init(city,days);
     			
-    				if(days ==1 )
-    				{
-    					String extWeat=WeatherGetter.getExternalWeather();
-    					String[] x = extWeat.split(" ");
-    					text = x[2];
-    					text += " " + ApiUtil.convertEmoji(x[1]);
-    					text += " "+x[0]+"� C";
-    				}
-    				else if(days ==3)
-    				{
-    					text="";
-    					String forecast = WeatherGetter.getForecast();
-    					String[] fore =forecast.split("\n");
-    					String[] x= new String[14];
-    					String[] y= new String[14];
-    					String[] z= new String[14];
-    					x=fore[0].split("\"");
-    					for(int i=0;i<x.length;i++)
-    						System.out.println(i + " "+x[i]);
-    					y=fore[1].split("\"");
-    					for(int i=0;i<y.length;i++)
-    						System.out.println(i + " "+y[i]);
-    					z=fore[2].split("\"");
-    					for(int i=0;i<z.length;i++)
-    						System.out.println(i +" "+ z[i]);
-    					
-    					text += ApiUtil.buildWeatherText(x)+"\n\n";
-    					text += ApiUtil.buildWeatherText(y)+"\n\n";
-    					text += ApiUtil.buildWeatherText(z);
-    					
-    				}
-    				else
-    					text += " Maximum forecast supported: 3 days";
-    			break;
+    					if(days == 1 || days == 0)
+    					{
+    						String extWeat=WeatherGetter.getExternalWeather();
+    						String[] x = extWeat.split(" ");
+    						text = x[2];
+    						text += " " + ApiUtil.convertEmoji(x[1]);
+    						text += " "+x[0]+"� C";
+    					}
+    					else if(days ==3)
+    					{
+    						text="";
+    						String forecast = WeatherGetter.getForecast();
+    						String[] fore =forecast.split("\n");
+    						String[] x= new String[14];
+    						String[] y= new String[14];
+    						String[] z= new String[14];
+    						x=fore[0].split("\"");
+    						y=fore[1].split("\"");
+    						z=fore[2].split("\"");
+    						
+    						text += ApiUtil.buildWeatherText(x)+"\n\n";
+    						text += ApiUtil.buildWeatherText(y)+"\n\n";
+    						text += ApiUtil.buildWeatherText(z);
+    						
+    					}
+    					else
+    						text += " Forecasts supported : 1 OR 3 days";
+    			}
+    			catch(Exception e)
+    			{
+    				text += "Command not recognized";
+    			}
+    				break;
     		}
     		case "setLights":
 			{
@@ -326,6 +327,21 @@ public class CommandExecuter
     		{
     			LightControl.autoMode = false;
     			text = "Automode Off! ";
+    			
+    			break;
+    		}
+    		case "setComfort":
+    		{
+    			try
+    			{
+    				int newTemp = Integer.parseInt(input.getResult().getStringParameter("temp"));
+    				ApiAiListener.COMFORT_TEMPERATURE = newTemp;
+    				text = "Comfort temperature set!";
+    			}
+    			catch(Exception e)
+    			{
+    				text += "Command not recognised ";
+    			}
     			
     			break;
     		}
