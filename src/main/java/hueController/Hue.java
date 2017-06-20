@@ -10,7 +10,7 @@ public class Hue
 	  private static String username = "lqo778nsVu54Kb1mSLa6pyIGPysfxYzQdt5litQR";
 
 	  public static boolean isOn = false;
-	  private static final int MAX_HUE_POWER = 255;
+	  public static final int MAX_HUE_POWER = 255;
 	  
 
 	 //EMULATOR CONFIGURATIONS
@@ -64,8 +64,18 @@ public class Hue
     {
     	init();
     	
-    	lightsOn();
+    	if(! isOn)
+    	{
+    		lightsOn();
+    		return;
+    	}
 
+    	if(value == 0)
+    	{
+    		lightsOff();
+    		return;
+    	}
+    	
         if (allLights.containsKey("1")) 
 		{
         	value = (value * MAX_HUE_POWER) / 100;
@@ -86,10 +96,9 @@ public class Hue
     	
     	if (allLights.containsKey("1")) 
 		{
-			String callURL = lightsURL + "1" + "/state";
-			result = HttpClientUtil.get(callURL);
+			result = HttpClientUtil.get(lightsURL);
 			
-			Double brightness = (Double) ((Map<String, ?>) ((Map<String, ?>) ((Map<String, ?>) result.get("lights")).get("1")).get("state")).get("bri");
+			Double brightness = (Double) ((Map<String, ?>) ((Map<String, ?>) result.get("1")).get("state")).get("bri");
 			return (int) brightness.intValue();
 		}
 		else

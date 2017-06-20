@@ -1,20 +1,17 @@
 package controlThreads;
 
-import httpServer.ApiAiListener;
 import hueController.Hue;
-import hueController.HueException;
 import util.ApiUtil;
-import weatherApi.WeatherGetter;
 import zWaveController.ZWave;
 
 public class ComfortControl extends Thread 
 {
-	private final float COMFORT_TEMPERATURE = 26;			/*da usare poi un'altro valore: questo è solo per test*/
+	private final float COMFORT_TEMPERATURE = 50;			/*da usare poi un'altro valore: questo è solo per test*/
+	private final float DELTA_GRADES = 1;                   /*da usare poi +- 4*/
 	private final int NORMAL_FREQUENCY = 3000;				/*da usare poi 108000*/
 	private final int HIGH_FREQUENCY = 500;
 	private int FREQ;
 	private final int POWER_STEP = 15;
-	private final float DELTA_GRADES = 1;                   /*da usare poi +- 4*/
 	private final float MIN_COMFORT_LUX = 250;
 	private final float MAX_COMFORT_LUX = 350;	
 	
@@ -40,15 +37,15 @@ public class ComfortControl extends Thread
 				lightPower = computeBestPower(currentInnerLux);  
 
 				// CONTROLLA TEMPERATURA
-				String temperature = ZWave.getTemperature();
-				float tempNumb= Float.parseFloat(temperature.substring(0, temperature.length()-3));
+				float tempNumb= Float.parseFloat(ZWave.getTemperature().split(" ")[0]);
 			
 				//temperatura troppo bassa
 				if(tempNumb < (COMFORT_TEMPERATURE - DELTA_GRADES))
 				{
 				
 					//accende la presa della stufetta solo se non � gi� accesa
-					plugPower = Float.parseFloat(ZWave.getPower());
+					plugPower = Float.parseFloat(ZWave.getPower().split(" ")[0]);
+
 
 					//se la potenza misurata è circa 0, la stufa non è ancora accesa quindi la accende
 					if(plugPower <= 0)
@@ -57,7 +54,7 @@ public class ComfortControl extends Thread
 					}
 
 					//regola intensit� della luce solo se si � in auto_mode e se c'� una luce accesa
-					if(LightControl.autoMode && Hue.isOn)
+					if(LightControl.autoMode || Hue.isOn)
 					{
 						Hue.lightsPower(lightPower);
 						Hue.cold();			
@@ -67,15 +64,15 @@ public class ComfortControl extends Thread
 				else if(tempNumb > (COMFORT_TEMPERATURE + DELTA_GRADES))
 				{
 						//spegne la presa della stufetta solo se non è già spenta
-						plugPower = Float.parseFloat(ZWave.getPower());
+						plugPower = Float.parseFloat(ZWave.getPower().split(" ")[0]);
 						
 						//se la potenza misurata � < 0, la stufa � gi� spenta
-						if(plugPower >= 0)
+						if(plugPower > 0)
 						{	
 							ZWave.plugOff();
 						}
 						
-						if(LightControl.autoMode && Hue.isOn)
+						if(LightControl.autoMode || Hue.isOn)
 						{
 							Hue.lightsPower(lightPower);
 							Hue.hot();	
@@ -84,7 +81,7 @@ public class ComfortControl extends Thread
 				//temperatura ok
 				else
 				{	
-					if(LightControl.autoMode && Hue.isOn)
+					if(LightControl.autoMode || Hue.isOn)
 					{
 						Hue.lightsPower(lightPower);
 					}
@@ -94,7 +91,7 @@ public class ComfortControl extends Thread
 			catch (Exception e)
 			{
 				System.out.println("Probably no connection with ZWave");
-				//e.printStackTrace();
+				e.printStackTrace();
 			}
 		}
 	}
@@ -102,7 +99,6 @@ public class ComfortControl extends Thread
 	public int computeBestPower(int innerLux) throws Exception
 	{
 		int ret = 0, currentPower;
-		boolean luxOk = false;
 		
 		//PRIMA COSA: MOVIMENTO
 		//cerca se c'è movimento in stanza
@@ -133,7 +129,7 @@ public class ComfortControl extends Thread
 		else if(innerLux > MAX_COMFORT_LUX)
 			ret = currentPower - POWER_STEP;
 
-		return ret;
+		return (ret >= Hue.MAX_HUE_POWER ? Hue.MAX_HUE_POWER : ret);
 		
 		/*
 		//prende la condizione meteo esterna

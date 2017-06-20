@@ -22,6 +22,11 @@ public class ApiAiListener
     	//inizializza parametri zwave
 		ZWave.init();
 		
+		//inizializza tutto a OFF per un punto di partenza pulito
+		Hue.lightsOff();
+		ZWave.plugOff();
+		Thread.sleep(500);
+	
 		//fa partire thread controllo luminosità
 		Thread comfort = new ComfortControl();
 		comfort.start();
