@@ -1,9 +1,8 @@
 package httpServer;
 
 import java.time.LocalDateTime;
-
+import java.util.logging.Logger;
 import com.vdurmont.emoji.EmojiParser;
-
 import ai.api.model.AIResponse;
 import ai.api.model.Fulfillment;
 import controlThreads.LightControl;
@@ -17,12 +16,14 @@ import zWaveController.ZWave;
 public class CommandExecuter
 {
 	private static Writer writer;
+	private static Logger logger = Logger.getLogger(CommandExecuter.class.getName());
 	
     public static void doWebHook(AIResponse input, Fulfillment output)
     {
     	String text = "ERROR ";
     	String action = input.getResult().getAction();
     	
+    	logger.info("User says : " + action);
     	
     	switch(action)
     	{
@@ -43,6 +44,8 @@ public class CommandExecuter
     			} 
         		catch (HueException e) 
         		{
+        			logger.severe("Exception : " + e + "\n" + e.getMessage());
+        			e.printStackTrace();
     				text += e.getMessage();
     			}
     			break;
@@ -63,6 +66,8 @@ public class CommandExecuter
     			} 
         		catch (HueException e) 
         		{
+        			logger.severe("Exception : " + e + "\n" + e.getMessage());
+        			e.printStackTrace();
     				text += e.getMessage();
     			}
     			
@@ -91,6 +96,8 @@ public class CommandExecuter
     			} 
         		catch (HueException e) 
         		{
+        			logger.severe("Exception : " + e + "\n" + e.getMessage());
+        			e.printStackTrace();
     				text = e.getMessage();
     			}
         		break;
@@ -104,6 +111,8 @@ public class CommandExecuter
         		}
         		catch (Exception e) 
         		{
+        			logger.severe("Exception : " + e + "\n" + e.getMessage());
+        			e.printStackTrace();
     				text += e.getMessage();
     			}
     			break;
@@ -123,6 +132,8 @@ public class CommandExecuter
         		}
         		catch (Exception e) 
         		{
+        			logger.severe("Exception : " + e + "\n" + e.getMessage());
+        			e.printStackTrace();
     				text += e.getMessage();
     			}
         		break;
@@ -142,6 +153,8 @@ public class CommandExecuter
         		}
         		catch (Exception e) 
         		{
+        			logger.severe("Exception : " + e + "\n" + e.getMessage());
+        			e.printStackTrace();
     				text += e.getMessage();
     			}
         		break;
@@ -161,6 +174,8 @@ public class CommandExecuter
         		}
         		catch (Exception e) 
         		{
+        			logger.severe("Exception : " + e + "\n" + e.getMessage());
+        			e.printStackTrace();
     				text += e.getMessage();
     			}
         		break;
@@ -182,6 +197,8 @@ public class CommandExecuter
         		}
         		catch (Exception e) 
         		{
+        			logger.severe("Exception : " + e + "\n" + e.getMessage());
+        			e.printStackTrace();
     				text += e.getMessage();
     			}
         		
@@ -195,6 +212,8 @@ public class CommandExecuter
         		}
         		catch (Exception e) 
         		{
+        			logger.severe("Exception : " + e + "\n" + e.getMessage());
+        			e.printStackTrace();
     				text += e.getMessage();
     			}
     			break;
@@ -237,6 +256,8 @@ public class CommandExecuter
     			}
     			catch(Exception e)
     			{
+    				logger.severe("Exception : " + e + "\n" + e.getMessage());
+        			e.printStackTrace();
     				text += "Command not recognized";
     			}
     				break;
@@ -258,6 +279,8 @@ public class CommandExecuter
 				}
 				catch (Exception e)
 				{
+					logger.severe("Exception : " + e + "\n" + e.getMessage());
+        			e.printStackTrace();
 					text += e.getMessage();
 				}
 				break;
@@ -274,6 +297,8 @@ public class CommandExecuter
     			}
     			catch (Exception e)
 				{
+    				logger.severe("Exception : " + e + "\n" + e.getMessage());
+        			e.printStackTrace();
 					text += e.getMessage();
 				}
 				break;
@@ -302,6 +327,8 @@ public class CommandExecuter
     			}
     			catch(Exception e)
     			{
+    				logger.severe("Exception : " + e + "\n" + e.getMessage());
+        			e.printStackTrace();
     				text += "Command not recognised ";
     			}
     			
@@ -313,6 +340,7 @@ public class CommandExecuter
     		}
     	}
     	
+    	logger.info("Server responds : " + text);
     	output.setSpeech(text);
     	output.setDisplayText(text);
 	}
