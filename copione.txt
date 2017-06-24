@@ -1,0 +1,37 @@
+N:
+Buongiorno! Siamo Garion e Noemi, siamo studenti dell'università del piemonte orientale e abbiamo realizzato
+un progetto di Iot per il corso di Reti2. 
+
+G:
+per Iot si intende internet of things, ovvero l'estensione della rete internet agli oggetti d'uso comune, come :
+lampadine, prese della corrente e sensori.
+
+N:
+L'argomento del progetto riguarda un assistente conversazionale per la gestione di alcuni aspetti della propria 
+abitazione.
+
+G:
+Il nostro assistente si chiama Homefort (da Home, casa, e comfort) ed è in grado di interagire con 
+luci e sensori installati nella propria casa.
+
+N:
+HomeFort è un sistema automatico di regolazione di alcuni aspetti del comfort casalingo: luci e temperatura.
+permette l'interazione con l'utente, che può impostare i parametri del comfort e gestire direttamente 
+alcuni componenti.
+
+G:
+Tutte le conversazioni fra l'utente e Homefort avvengono tramite un bot telegram, in modo da semplificare 
+la conversazione: si può infatti comunicare con il sistema comodamente dallo smartphone anche se 
+non si è fisicamente in casa.
+
+N:
+L'utente finale del prodotto ha la facoltà di accendere o spegnere le luci e impostarne la luminosità, 
+può chiedere informazioni sulle condizioni interne della casa (luminosità, umidità, temperatura e movimento) 
+e sulle condizioni meteo.
+
+G:
+Si possono inoltre impostare gli orari della giornata in cui le luci dovranno essere sempre accese
+e la temperatura ideale che si vuole mantenere nell'abitazione. 
+
+N:
+Ora daremo una dimostrazione delle funzionalità di Homefort, mostrando una serie di comandi utilizzabili via telegram.

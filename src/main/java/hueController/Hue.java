@@ -96,6 +96,7 @@ public class Hue
 		{
 			result = HttpClientUtil.get(lightsURL);
 			
+			@SuppressWarnings("unchecked")
 			Double brightness = (Double) ((Map<String, ?>) ((Map<String, ?>) result.get("1")).get("state")).get("bri");
 			return (int) brightness.intValue();
 		}

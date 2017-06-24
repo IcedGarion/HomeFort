@@ -199,44 +199,6 @@ public class CommandExecuter
     			}
     			break;
     		}
-    		case "plugInfo":
-    		{
-    			try
-        		{
-        			text = ZWave.renderPlugMeasurements();
-        		}
-        		catch (Exception e) 
-        		{
-    				text += e.getMessage();
-    			}
-    			break;
-    		}
-    		case "plugOn":
-    		{
-    			try
-        		{
-        			ZWave.plugOn();
-        			text = "Plug is on! ";
-        		}
-        		catch (Exception e) 
-        		{
-    				text += e.getMessage();
-    			}
-    			break;
-    		}
-    		case "plugOff":
-    		{
-    			try
-        		{
-        			ZWave.plugOff();
-        			text = "Plug is off! ";
-        		}
-        		catch (Exception e) 
-        		{
-    				text += e.getMessage();
-    			}
-    			break;
-    		}
     		case "getWeather":
     		{
     			try

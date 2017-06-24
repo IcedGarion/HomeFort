@@ -2,7 +2,6 @@ package controlThreads;
 
 import httpServer.ApiAiListener;
 import hueController.Hue;
-import util.ApiUtil;
 import zWaveController.ZWave;
 
 public class ComfortControl extends Thread 
@@ -131,54 +130,5 @@ public class ComfortControl extends Thread
 			ret = currentPower - POWER_STEP;
 
 		return (ret >= Hue.MAX_HUE_POWER ? Hue.MAX_HUE_POWER : ret);
-		
-		/*
-		//prende la condizione meteo esterna
-		String extWeat = WeatherGetter.getExternalWeather();
-		String[] x = extWeat.split(" ");
-		String conditionCode = x[1];
-		
-		/*se luminosità esterna >= quella interna (di un tot), avvisa di aprire le finestre
-		outerLight = lightFromCondition(conditionCode);
-			...
-			...
-		*/
-		//se luce è accesa e c'è lux ok, lascia cosi'
-		//se luce e' spenta e lux ok, lascia cosi'
-		//se luce accesa, lux no ok, alza/abbassa
-		//se luce spensa, lux no ok, alza/abbassa
-	}	
-	
-	private int lightFromCondition(String conditionCode)
-	{
-		String weatherCategory = ApiUtil.convertIntoCategory(conditionCode);
-		int lux = 0;
-		
-		switch(weatherCategory)
-		{
-			case ":sunny:":
-				lux = 100000;
-				break;
-			case ":cloud:":
-				lux = 2000;
-				break;
-			case ":fog:":
-				lux = 4000;
-				break;
-			case ":cloud_rain:":
-				lux = 500;
-				break;
-			case ":cloud_snow:":
-				lux = 5000;
-				break;
-			case ":thunder_cloud_rain:":
-				lux = 1;
-				break;
-			default:
-				lux = 0;
-				break;
-		}
-		
-		return lux;
 	}
 }

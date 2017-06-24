@@ -1,9 +1,7 @@
 package controlThreads;
 
-import httpServer.ApiAiListener;
 import hueController.Hue;
 import util.Writer;
-
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.time.Duration;

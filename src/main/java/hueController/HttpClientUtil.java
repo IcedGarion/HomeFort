@@ -14,7 +14,8 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class HttpClientUtil {
+public class HttpClientUtil
+{
 
     // init gson
     private static final Gson gson = new Gson();
@@ -26,8 +27,8 @@ public class HttpClientUtil {
      * @return the response, parsed from JSON
      * @throws HueException 
      */
-    public static Map<String, ?> get(String URL)  {			//http GET
-        // init
+	public static Map<String, ?> get(String URL) 			//http GET
+    {
         Map<String, ?> response = new HashMap<>();
 
         CloseableHttpClient httpclient = HttpClients.createDefault();
@@ -62,13 +63,14 @@ public class HttpClientUtil {
      * @param contentBody the content body of the request
      * @param contentType the content type of the request
      */
-    public static void put(String URL, String contentBody, String contentType) {	//http PUT
-        // init
+    public static void put(String URL, String contentBody, String contentType) 	//http PUT
+    {
         CloseableHttpClient httpclient = HttpClients.createDefault();
         HttpPut request = new HttpPut(URL);
         StringEntity params = null;
 
-        try {
+        try
+        {
             params = new StringEntity(contentBody);									//inizializza il body da passare
             request.addHeader("content-type", contentType);							//set content-type
             request.setEntity(params);												//imposta il body con quello passato per parametro
@@ -76,10 +78,10 @@ public class HttpClientUtil {
             
             // should be in finally...
             httpclient.close();
-        } catch (Exception e) {
+        } 
+        catch (Exception e)
+        {
             e.printStackTrace();
         }
-
     }
-
 }
