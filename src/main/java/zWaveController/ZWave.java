@@ -15,17 +15,13 @@ public class ZWave
 	public static int sensorNodeId = 5;
 	public static int plugNodeId = 19;	//3 � safety home
 	private static IZWayApi zwayApi;
-
+	private static String ipAddress = "172.30.1.137"; 
+	private static String username = "admin";
+    private static String password = "raz4reti2";
+    
     public static void init()
     {
-    	// RaZberry IP address
-        String ipAddress = "172.30.1.137";
-
-        // username and password
-        String username = "admin";
-        String password = "raz4reti2";
-
-        // create an instance of the Z-Way library; all the params are mandatory (we are not going to use the remote service/id)
+    	// create an instance of the Z-Way library; all the params are mandatory (we are not going to use the remote service/id)
         zwayApi = new ZWayApiHttp(ipAddress, 8083, "http", username, password, 0, false, new ZWaySimpleCallback());
     }
     

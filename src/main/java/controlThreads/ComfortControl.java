@@ -65,7 +65,7 @@ public class ComfortControl extends Thread
 						//spegne la presa della stufetta solo se non è già spenta
 						plugPower = Float.parseFloat(ZWave.getPower().split(" ")[0]);
 						
-						//se la potenza misurata � < 0, la stufa � gi� spenta
+						//se la potenza misurata e' < 0, la stufa e' gia' spenta
 						if(plugPower > 0)
 						{	
 							ZWave.plugOff();

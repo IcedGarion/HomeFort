@@ -275,7 +275,7 @@ public class CommandExecuter
 					writer.setData(start, end);
 					writer.start();
 					
-					text = "Rule set: " + start  + " - " +  end;
+					text = "Rule set: " + start  + " - " +  end + "\nRemember the automode!";
 				}
 				catch (Exception e)
 				{

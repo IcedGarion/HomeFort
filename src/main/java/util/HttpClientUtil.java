@@ -1,6 +1,8 @@
-package hueController;
+package util;
 
 import com.google.gson.Gson;
+
+import hueController.HueException;
 
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;

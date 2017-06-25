@@ -2,6 +2,8 @@ package hueController;
 
 import java.util.Map;
 
+import util.HttpClientUtil;
+
 public class Hue
 {
 	 // LAB CONFIGURATIONS

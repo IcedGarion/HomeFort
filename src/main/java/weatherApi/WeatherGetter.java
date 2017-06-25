@@ -2,7 +2,8 @@ package weatherApi;
 
 import java.util.ArrayList;
 import java.util.Map;
-import hueController.HttpClientUtil;
+
+import util.HttpClientUtil;
 
 public class WeatherGetter 
 {
